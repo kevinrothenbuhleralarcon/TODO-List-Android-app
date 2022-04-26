@@ -12,6 +12,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import ch.kra.todo.core.presentation.ui.theme.TodoTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,33 +21,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TodoTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Column() {
-                        Greeting("Android")
-                        Button(onClick = { /*TODO*/ }) {
-                            Text(text = "test")
-                        }
-                    }
-
-                }
+                val navController = rememberNavController()
+                Navigation(navController = navController)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TodoTheme {
-        Greeting("Android")
     }
 }
