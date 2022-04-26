@@ -1,4 +1,4 @@
-package ch.kra.todo.ui.theme
+package ch.kra.todo.core.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
