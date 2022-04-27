@@ -1,6 +1,5 @@
 package ch.kra.todo.auth.data.repository
 
-import android.util.Log
 import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.auth.data.remote.dto.requests.LoginRequestDTO
 import ch.kra.todo.auth.data.remote.dto.responses.LoginResponseDTO
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 
+
 class AuthRepositoryImpl(
     private val authApi: AuthApi
 ) : AuthRepository {
@@ -19,12 +19,12 @@ class AuthRepositoryImpl(
         try {
             val loginRequest = LoginRequestDTO(username, password)
             val loginResponse = authApi.login(loginRequest)
-            if(loginResponse.isSuccessful) {
-
-            }
+            emit(Resource.Success(
+                data = loginResponse
+            ))
         } catch (e: HttpException) {
             emit(Resource.Error(
-                message = e.message()
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
             ))
         } catch (e: IOException) {
             emit(Resource.Error(
