@@ -14,7 +14,11 @@ fun Navigation(navController: NavHostController) {
         startDestination = Routes.LOGIN
     ) {
         composable(Routes.LOGIN) {
-            LoginScreen()
+            LoginScreen(
+                navigate = { event ->
+                    navController.navigate(event.route)
+                }
+            )
         }
     }
 }
