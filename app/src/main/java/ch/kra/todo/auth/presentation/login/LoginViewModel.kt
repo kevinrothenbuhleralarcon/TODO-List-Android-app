@@ -29,6 +29,8 @@ class LoginViewModel @Inject constructor(
 
     private val _password = mutableStateOf("")
     val password: State<String> = _password
+    private val _passwordVisible = mutableStateOf(false)
+    val passwordVisible: State<Boolean> = _passwordVisible
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -49,6 +51,10 @@ class LoginViewModel @Inject constructor(
 
             is AuthListEvent.OnNavigateToWebClient -> {
 
+            }
+
+            is AuthListEvent.TogglePasswordVisibility -> {
+                _passwordVisible.value = !passwordVisible.value
             }
         }
     }
