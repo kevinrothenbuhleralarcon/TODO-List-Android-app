@@ -58,6 +58,9 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    // Datastore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
     // Dagger-hilt
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
