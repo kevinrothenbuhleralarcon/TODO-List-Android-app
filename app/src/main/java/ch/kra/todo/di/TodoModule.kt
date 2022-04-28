@@ -11,6 +11,10 @@ import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.core.Constants.BASE_URL
 import ch.kra.todo.core.Constants.CONNECTION_PREFERENCE_NAME
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.todo.data.remote.TodoApi
+import ch.kra.todo.todo.data.repository.TodoRepositoryImpl
+import ch.kra.todo.todo.domain.repository.TodoRepository
+import ch.kra.todo.todo.domain.use_case.GetTodoList
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,11 +25,32 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object TodoModule {
 
+    @Provides
+    @Singleton
+    fun provideTodoApi(): TodoApi {
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .build()
+            .create(TodoApi::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideTodoRepository(todoApi: TodoApi): TodoRepository {
+        return TodoRepositoryImpl(todoApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetTodoList(todoRepository: TodoRepository): GetTodoList {
+        return GetTodoList(todoRepository)
+    }
 }

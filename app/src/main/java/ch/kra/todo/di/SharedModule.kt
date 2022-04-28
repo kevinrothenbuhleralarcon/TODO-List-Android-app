@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object SharedModule {
-    
+
     @Provides
     @Singleton
     fun providePreferenceDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {

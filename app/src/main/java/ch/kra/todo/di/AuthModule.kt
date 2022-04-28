@@ -29,13 +29,13 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun provideLogin(repository: AuthRepository): Login {
-        return Login(repository)
+    fun provideAuthRepository(authApi: AuthApi): AuthRepository {
+        return AuthRepositoryImpl(authApi)
     }
 
     @Provides
     @Singleton
-    fun provideAuthRepository(authApi: AuthApi): AuthRepository {
-        return AuthRepositoryImpl(authApi)
+    fun provideLogin(repository: AuthRepository): Login {
+        return Login(repository)
     }
 }

@@ -11,13 +11,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.presentation.Footer
 import ch.kra.todo.core.presentation.Header
+import ch.kra.todo.todo.presentation.todos.TodoListViewModel
 
 @Composable
 fun TodoListScreen(
+    viewModel: TodoListViewModel = hiltViewModel(),
     navigate: (UIEvent.Navigate) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
