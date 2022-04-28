@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TodoRepository {
     fun getTodoList(token: String): Flow<Resource<List<Todo>>>
+
+    fun getTodo(token: String, todoId: Int): Flow<Resource<Todo>>
 }

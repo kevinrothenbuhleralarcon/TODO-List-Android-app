@@ -19,17 +19,31 @@ class TodoRepositoryImpl(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getTodoList(token: String): Flow<Resource<List<Todo>>> = flow {
         emit(Resource.Loading())
-        Log.d("todo", "Loading")
         try {
             val todoList = todoApi.getTodoList(token).todos.map { it.toTodo() }
             emit(Resource.Success(data = todoList))
         } catch (e: HttpException) {
-            Log.d("todo", "catch error HTTP")
             emit(Resource.Error(
                 message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
             ))
         } catch (e: IOException) {
-            Log.d("todo", "catch error IO")
+            emit(Resource.Error(
+                message = e.message ?: "Could not reach server, check your internet connection."
+            ))
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun getTodo(token: String, todoId: Int): Flow<Resource<Todo>> = flow {
+        emit(Resource.Loading())
+        try {
+            val todo = todoApi.getTodo(token, todoId).todo.toTodo()
+            emit(Resource.Success(data = todo))
+        } catch (e: HttpException) {
+            emit(Resource.Error(
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+            ))
+        } catch (e: IOException) {
             emit(Resource.Error(
                 message = e.message ?: "Could not reach server, check your internet connection."
             ))
