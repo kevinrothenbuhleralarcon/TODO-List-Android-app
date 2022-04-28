@@ -46,7 +46,13 @@ class TodoListViewModel @Inject constructor(
 
     fun onEvent(event: TodoListEvent) {
         when (event) {
-            is TodoListEvent.AddEditTodo -> {
+            is TodoListEvent.AddTodo -> {
+                sendUIEvent(
+                    UIEvent.Navigate(Routes.ADD_EDIT_TODO)
+                )
+            }
+
+            is TodoListEvent.EditTodo -> {
                 sendUIEvent(
                     UIEvent.Navigate(
                         Routes.ADD_EDIT_TODO +

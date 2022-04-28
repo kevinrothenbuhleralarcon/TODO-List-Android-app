@@ -6,9 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -57,6 +57,14 @@ fun TodoListScreen(
     }
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.onEvent(TodoListEvent.AddTodo) },
+                backgroundColor = MaterialTheme.colors.primary
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_todo))
+            }
+        },
         bottomBar = {
             Footer(
                 modifier = Modifier
@@ -114,7 +122,7 @@ private fun TodoList(
         items(todoList.size) {
             TodoCard(
                 modifier = Modifier
-                    .clickable { onEvent(TodoListEvent.AddEditTodo(todoList[it].id ?: 0)) }
+                    .clickable { onEvent(TodoListEvent.EditTodo(todoList[it].id ?: 0)) }
             ) {
                 TodoItem(todo = todoList[it])
             }
@@ -124,7 +132,7 @@ private fun TodoList(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun TodoItem (
+private fun TodoItem(
     todo: Todo
 ) {
     Column {
@@ -136,18 +144,24 @@ private fun TodoItem (
             modifier = Modifier
                 .fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(20.dp))
-        
+
         Text(
-            text = stringResource(R.string.created_on, DateFormatUtil.formatToString(todo.createdAt)),
+            text = stringResource(
+                R.string.created_on,
+                DateFormatUtil.formatToString(todo.createdAt)
+            ),
             color = TextInfoColor
         )
-        
+
         Spacer(modifier = Modifier.height(5.dp))
 
         Text(
-            text = stringResource(R.string.last_updated_on, DateFormatUtil.formatToString(todo.lastUpdatedAt)),
+            text = stringResource(
+                R.string.last_updated_on,
+                DateFormatUtil.formatToString(todo.lastUpdatedAt)
+            ),
             color = TextInfoColor
         )
     }
