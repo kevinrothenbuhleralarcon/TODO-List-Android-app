@@ -9,4 +9,6 @@
     <string name="submit">Submit</string>
     <string name="create_account">Create account</string>
     <string name="todo_list_header">Hello, %1$s here are your todos</string>
+    <string name="created_on">Created on:\n%1$s</string>
+    <string name="last_updated_on">Last updated on:\n%1$s</string>
 </resources>
