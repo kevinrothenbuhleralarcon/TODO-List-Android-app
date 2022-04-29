@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import ch.kra.todo.core.Resource
 import ch.kra.todo.todo.data.remote.TodoApi
+import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
 import ch.kra.todo.todo.domain.model.Todo
 import ch.kra.todo.todo.domain.repository.TodoRepository
 import kotlinx.coroutines.flow.Flow
@@ -39,6 +40,66 @@ class TodoRepositoryImpl(
         try {
             val todo = todoApi.getTodo(token, todoId).todo.toTodo()
             emit(Resource.Success(data = todo))
+        } catch (e: HttpException) {
+            emit(Resource.Error(
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+            ))
+        } catch (e: IOException) {
+            emit(Resource.Error(
+                message = e.message ?: "Could not reach server, check your internet connection."
+            ))
+        }
+    }
+
+    override fun addTodo(token: String, request: AddEditTodoRequestDTO): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = todoApi.addTodo(token, request)
+            if (response.isSuccessful) {
+                emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else {
+                emit(Resource.Error(message = response.body() ?: "Error"))
+            }
+        } catch (e: HttpException) {
+            emit(Resource.Error(
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+            ))
+        } catch (e: IOException) {
+            emit(Resource.Error(
+                message = e.message ?: "Could not reach server, check your internet connection."
+            ))
+        }
+    }
+
+    override fun updateTodo(token: String, request: AddEditTodoRequestDTO): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = todoApi.updateTodo(token, request)
+            if (response.isSuccessful) {
+                emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else {
+                emit(Resource.Error(message = response.body() ?: "Error"))
+            }
+        } catch (e: HttpException) {
+            emit(Resource.Error(
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+            ))
+        } catch (e: IOException) {
+            emit(Resource.Error(
+                message = e.message ?: "Could not reach server, check your internet connection."
+            ))
+        }
+    }
+
+    override fun deleteTodo(token: String, todoId: Int): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = todoApi.deleteTodo(token, todoId)
+            if (response.isSuccessful) {
+                emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else {
+                emit(Resource.Error(message = response.body() ?: "Error"))
+            }
         } catch (e: HttpException) {
             emit(Resource.Error(
                 message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
