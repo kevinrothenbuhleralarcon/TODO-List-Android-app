@@ -2,7 +2,6 @@ package ch.kra.todo.core
 
 import org.junit.Assert.*
 import org.junit.Test
-import java.time.LocalDateTime
 
 class DateFormatUtilTest {
 
@@ -33,7 +32,22 @@ class DateFormatUtilTest {
         val minutes = 0
         val seconds = 0
         val dateTime = DateFormatUtil.fromDateTimeValues(year, month, day, hour, minutes, seconds)
-        val formatedString = DateFormatUtil.formatStringDateFromLocalDateTime(dateTime)
-        assert(formatedString == expectedString)
+        val formattedString = DateFormatUtil.formatStringDateFromLocalDateTime(dateTime)
+        assertEquals("Doesn't match: $formattedString", formattedString, expectedString)
+    }
+
+    @Test
+    fun testToISOInstantString() {
+        val dateTime = "2022-04-12T08:05:58Z"
+        val localDateTime = DateFormatUtil.fromISOInstantString(dateTime)
+        val resString = DateFormatUtil.toISOInstantString(localDateTime)
+        assertEquals("Doesn't match: $resString", resString, dateTime)
+    }
+
+    @Test
+    fun testFromCurrentTimeMillis() {
+        val localDateTime = DateFormatUtil.fromLong(System.currentTimeMillis())
+        val resString = DateFormatUtil.toISOInstantString(localDateTime)
+        assertEquals("Doesn't match: $resString", resString, "")
     }
 }
