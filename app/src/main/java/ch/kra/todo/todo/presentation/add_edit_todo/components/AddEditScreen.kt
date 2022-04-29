@@ -40,7 +40,8 @@ import kotlinx.coroutines.flow.collect
 @Composable
 fun AddEditScreen(
     viewModel: AddEditTodoViewModel = hiltViewModel(),
-    navigate: (UIEvent.Navigate) -> Unit
+    navigate: (UIEvent.Navigate) -> Unit,
+    popBackStack: () -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
     val username = viewModel.username.value
@@ -55,7 +56,7 @@ fun AddEditScreen(
                 }
 
                 is UIEvent.PopBackStack -> {
-
+                    popBackStack()
                 }
 
                 is UIEvent.ShowSnackbar -> {

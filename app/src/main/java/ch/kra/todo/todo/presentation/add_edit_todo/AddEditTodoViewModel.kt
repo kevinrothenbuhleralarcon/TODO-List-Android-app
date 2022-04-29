@@ -1,5 +1,8 @@
 package ch.kra.todo.todo.presentation.add_edit_todo
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,10 +10,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.core.Resource
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.todo.data.remote.dto.TaskDTO
+import ch.kra.todo.todo.data.remote.dto.TodoDTO
+import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
+import ch.kra.todo.todo.domain.use_case.AddTodo
+import ch.kra.todo.todo.domain.use_case.DeleteTodo
 import ch.kra.todo.todo.domain.use_case.GetTodo
+import ch.kra.todo.todo.domain.use_case.UpdateTodo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -18,12 +28,16 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditTodoViewModel @Inject constructor(
     private val getTodo: GetTodo,
     private val settingsDataStore: SettingsDataStore,
+    private val addTodo: AddTodo,
+    private val updateTodo: UpdateTodo,
+    private val deleteTodo: DeleteTodo,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -48,10 +62,12 @@ class AddEditTodoViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event: AddEditTodoEvent) {
         when (event) {
             is AddEditTodoEvent.Save -> {
-
+                /* TODO validate form */
+                addTodo()
             }
 
             is AddEditTodoEvent.Delete -> {
@@ -135,6 +151,45 @@ class AddEditTodoViewModel @Inject constructor(
                             sendUIEvent(UIEvent.ShowSnackbar(
                                 message = result.message ?: "Unknown error"
                             ))
+                        }
+
+                        is Resource.Loading -> {
+                            state = state.copy(
+                                isLoading = true
+                            )
+                        }
+                    }
+                }.launchIn(this)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun addTodo() {
+        val tasks = state.tasks.map { task -> TaskDTO(
+            id = task.id,
+            description = task.description,
+            deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
+            status = task.status,
+            todoId = null
+        ) }
+        val todo = TodoDTO(
+            id = null,
+            title = state.title,
+            createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            tasks = tasks
+        )
+        viewModelScope.launch {
+            addTodo(_token.value, AddEditTodoRequestDTO(todo))
+                .onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            sendUIEvent(UIEvent.PopBackStack)
+                        }
+
+                        is Resource.Error -> {
+                            /* TODO */
+                            Log.d("addTodo", result.message ?: "Error")
                         }
 
                         is Resource.Loading -> {

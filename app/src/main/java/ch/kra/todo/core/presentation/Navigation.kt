@@ -51,6 +51,9 @@ fun Navigation(navController: NavHostController) {
             AddEditScreen(
                 navigate = { event ->
                     navController.navigate(event.route)
+                },
+                popBackStack =  {
+                    navController.popBackStack()
                 }
             )
         }
