@@ -24,7 +24,9 @@ fun Navigation(navController: NavHostController) {
         composable(Routes.LOGIN) {
             LoginScreen(
                 navigate = { event ->
-                    navController.navigate(event.route)
+                    navController.navigate(event.route) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
                 }
             )
         }
@@ -38,7 +40,7 @@ fun Navigation(navController: NavHostController) {
         }
 
         composable(
-            route = Routes.ADD_EDIT_TODO + "/{todoId}",
+            route = Routes.ADD_EDIT_TODO + "?todoId={todoId}",
             arguments = listOf(
                 navArgument("todoId") {
                     type = NavType.IntType

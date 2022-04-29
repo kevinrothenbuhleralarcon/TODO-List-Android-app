@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +28,7 @@ import ch.kra.todo.core.presentation.Header
 import ch.kra.todo.core.presentation.LoadingWrapper
 import ch.kra.todo.core.presentation.TodoCard
 import ch.kra.todo.core.presentation.ui.theme.TextInfoColor
+import ch.kra.todo.core.presentation.ui.theme.TodoTheme
 import ch.kra.todo.todo.domain.model.Todo
 import ch.kra.todo.todo.presentation.todos.TodoListEvent
 import ch.kra.todo.todo.presentation.todos.TodoListViewModel
