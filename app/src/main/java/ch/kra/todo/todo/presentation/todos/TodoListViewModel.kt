@@ -41,7 +41,6 @@ class TodoListViewModel @Inject constructor(
 
     init {
         loadSettings()
-        getTodoList()
     }
 
     fun onEvent(event: TodoListEvent) {
@@ -74,7 +73,8 @@ class TodoListViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getTodoList() {
+    fun getTodoList() {
+        Log.d("TodoList", "LoadList")
         viewModelScope.launch {
             getTodoList(_token.value)
                 .onEach { result ->

@@ -83,6 +83,18 @@ class AddEditTodoViewModel @Inject constructor(
                 tasks[event.id] = tasks[event.id].copy(deadline = event.value)
                 state = state.copy(tasks = tasks)
             }
+
+            is AddEditTodoEvent.AddTask -> {
+                val tasks = state.tasks.toMutableList()
+                tasks.add(TaskFormState())
+                state = state.copy(tasks = tasks)
+            }
+
+            is AddEditTodoEvent.RemoveTask -> {
+                val tasks = state.tasks.toMutableList()
+                tasks.removeAt(event.id)
+                state = state.copy(tasks = tasks)
+            }
         }
     }
 

@@ -45,6 +45,7 @@ fun TodoListScreen(
     val todoListState = viewModel.todoListState.value
 
     LaunchedEffect(key1 = true) {
+        viewModel.getTodoList()
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UIEvent.Navigate -> {

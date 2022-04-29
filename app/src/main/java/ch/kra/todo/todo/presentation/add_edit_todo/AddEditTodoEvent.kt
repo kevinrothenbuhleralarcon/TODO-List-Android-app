@@ -10,4 +10,6 @@ sealed class AddEditTodoEvent {
     data class DescriptionChanged(val id: Int, val value: String): AddEditTodoEvent()
     data class StatusChanged(val id: Int, val value: Boolean): AddEditTodoEvent()
     data class DeadlineChanged(val id: Int, val value: LocalDateTime): AddEditTodoEvent()
+    object AddTask: AddEditTodoEvent()
+    data class RemoveTask(val id: Int): AddEditTodoEvent()
 }

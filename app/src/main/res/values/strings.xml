@@ -17,4 +17,7 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="new_todo">New todo</string>
+    <string name="description">Description</string>
+    <string name="add_task">Add Task</string>
+    <string name="remove_task">Remove task</string>
 </resources>

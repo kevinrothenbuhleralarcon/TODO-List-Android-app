@@ -1,13 +1,20 @@
 package ch.kra.todo.todo.presentation.add_edit_todo.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,9 +28,11 @@ import ch.kra.todo.core.presentation.Footer
 import ch.kra.todo.core.presentation.Header
 import ch.kra.todo.core.presentation.LoadingWrapper
 import ch.kra.todo.core.presentation.TodoCard
+import ch.kra.todo.core.presentation.ui.theme.BorderColor
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoEvent
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoViewModel
 import ch.kra.todo.todo.presentation.add_edit_todo.TodoFormState
+import ch.kra.todo.todo.presentation.todos.TodoListEvent
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -99,21 +108,26 @@ fun AddEditScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun TodoDetail (
+private fun TodoDetail(
     todoState: TodoFormState,
     currentTodoId: Int?,
     onEvent: (AddEditTodoEvent) -> Unit
 ) {
     TodoCard {
         Column(
+            horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             OutlinedTextField(
                 value = todoState.title,
                 onValueChange = { onEvent(AddEditTodoEvent.TitleChanged(it)) },
-                label = { Text(text = stringResource(R.string.title)) }
+                label = { Text(text = stringResource(R.string.title)) },
+                modifier = Modifier
+                    .fillMaxWidth()
             )
 
             LazyColumn(
@@ -122,60 +136,129 @@ private fun TodoDetail (
                     .weight(1f)
             ) {
                 items(todoState.tasks.size) { taskId ->
+
+                    Divider(
+                        color = BorderColor,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                    )
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        Checkbox(
-                            checked = todoState.tasks[taskId].status,
-                            onCheckedChange = { onEvent(AddEditTodoEvent.StatusChanged(taskId, it)) }
-                        )
+                        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                            Checkbox(
+                                checked = todoState.tasks[taskId].status,
+                                onCheckedChange = {
+                                    onEvent(
+                                        AddEditTodoEvent.StatusChanged(
+                                            taskId,
+                                            it
+                                        )
+                                    )
+                                }
+                            )
+                        }
 
                         Column(
                             modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 10.dp)
                         ) {
                             OutlinedTextField(
                                 value = todoState.tasks[taskId].description,
-                                onValueChange = { onEvent(AddEditTodoEvent.DescriptionChanged(taskId, it)) }
+                                label = { Text(text = stringResource(R.string.description)) },
+                                onValueChange = {
+                                    onEvent(
+                                        AddEditTodoEvent.DescriptionChanged(
+                                            taskId,
+                                            it
+                                        )
+                                    )
+                                }
                             )
                             Row(
+                                horizontalArrangement = Arrangement.End,
                                 modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 Text(text = stringResource(R.string.deadline))
                                 /* Todo: DatePicker */
                             }
                         }
 
-                        IconButton(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .background(MaterialTheme.colors.primary)
+                        FloatingActionButton(
+                            onClick = { onEvent(AddEditTodoEvent.RemoveTask(taskId)) },
+                            backgroundColor = MaterialTheme.colors.primary,
+                            modifier = Modifier.size(25.dp)
                         ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_remove), contentDescription = "Remove")
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_remove),
+                                contentDescription = stringResource(R.string.remove_task),
+                                tint = Color.White
+                            )
                         }
                     }
                 }
             }
 
-            Button(
-                onClick = { onEvent(AddEditTodoEvent.Save) },
+            Divider(
+                color = BorderColor,
+                thickness = 1.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+            )
+
+            FloatingActionButton(
+                onClick = { onEvent(AddEditTodoEvent.AddTask) },
+                backgroundColor = MaterialTheme.colors.primary,
+                modifier = Modifier.size(30.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.save),
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_task),
+                    tint = Color.White
                 )
             }
 
-            currentTodoId?.let {
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 Button(
-                    onClick = { onEvent(AddEditTodoEvent.Delete) }
+                    onClick = { onEvent(AddEditTodoEvent.Save) },
+                    modifier = Modifier
+                        .weight(1f)
                 ) {
                     Text(
-                        text = stringResource(R.string.delete),
+                        text = stringResource(R.string.save),
                         textAlign = TextAlign.Center,
                         fontSize = 18.sp,
                     )
+                }
+
+                currentTodoId?.let {
+                    Spacer(
+                        modifier = Modifier
+                            .width(10.dp)
+                    )
+                    Button(
+                        onClick = { onEvent(AddEditTodoEvent.Delete) },
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.delete),
+                            textAlign = TextAlign.Center,
+                            fontSize = 18.sp,
+                        )
+                    }
                 }
             }
         }
