@@ -3,12 +3,37 @@ package ch.kra.todo.core
 import android.os.Build
 import androidx.annotation.RequiresApi
 import ch.kra.todo.core.Constants.DATE_PATTERN
+import ch.kra.todo.core.Constants.DATE_TIME_PATTERN
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 object DateFormatUtil {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun formatToString(localDateTime: LocalDateTime): String {
+    fun formatStringDateTimeFromLocalDateTime(localDateTime: LocalDateTime): String {
+        return localDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatStringDateFromLocalDateTime(localDateTime: LocalDateTime): String {
         return localDateTime.format(DateTimeFormatter.ofPattern(DATE_PATTERN))
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun fromLong(date: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneId.of(Constants.ZONE_ID));
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun fromISOInstantString(dateTime: String): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.parse(dateTime), ZoneId.of(Constants.ZONE_ID))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun fromDateTimeValues(year: Int, month: Int, day: Int, hour: Int, minutes: Int, seconds: Int): LocalDateTime {
+        val dtf = DateTimeFormatter.ofPattern("yyyy-M-dd H:m:s")
+        val stringDateTime = "$year-$month-$day $hour:$minutes:$seconds"
+        return LocalDateTime.parse(stringDateTime, dtf)
+    }
+
 }

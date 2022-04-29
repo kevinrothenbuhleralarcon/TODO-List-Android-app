@@ -3,6 +3,7 @@ package ch.kra.todo.todo.data.remote.dto
 import android.os.Build
 import androidx.annotation.RequiresApi
 import ch.kra.todo.core.Constants
+import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.todo.domain.model.Task
 import java.time.Instant
 import java.time.LocalDateTime
@@ -19,7 +20,7 @@ data class TaskDTO(
     fun toTask(): Task {
         var deadlineDate: LocalDateTime? = null
         deadline?.let {
-            deadlineDate = LocalDateTime.ofInstant(Instant.parse(it), ZoneId.of(Constants.ZONE_ID))
+            deadlineDate = DateFormatUtil.fromISOInstantString(it)
         }
         return Task(
             id = id,

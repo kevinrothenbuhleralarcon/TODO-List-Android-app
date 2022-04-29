@@ -1,7 +1,6 @@
 package ch.kra.todo.todo.presentation.todos.components
 
 import android.os.Build
-import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +26,6 @@ import ch.kra.todo.core.presentation.Header
 import ch.kra.todo.core.presentation.LoadingWrapper
 import ch.kra.todo.core.presentation.TodoCard
 import ch.kra.todo.core.presentation.ui.theme.TextInfoColor
-import ch.kra.todo.core.presentation.ui.theme.TodoTheme
 import ch.kra.todo.todo.domain.model.Todo
 import ch.kra.todo.todo.presentation.todos.TodoListEvent
 import ch.kra.todo.todo.presentation.todos.TodoListViewModel
@@ -153,7 +150,7 @@ private fun TodoItem(
         Text(
             text = stringResource(
                 R.string.created_on,
-                DateFormatUtil.formatToString(todo.createdAt)
+                DateFormatUtil.formatStringDateTimeFromLocalDateTime(todo.createdAt)
             ),
             color = TextInfoColor
         )
@@ -163,7 +160,7 @@ private fun TodoItem(
         Text(
             text = stringResource(
                 R.string.last_updated_on,
-                DateFormatUtil.formatToString(todo.lastUpdatedAt)
+                DateFormatUtil.formatStringDateTimeFromLocalDateTime(todo.lastUpdatedAt)
             ),
             color = TextInfoColor
         )

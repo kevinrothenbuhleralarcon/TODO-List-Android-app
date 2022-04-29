@@ -3,6 +3,7 @@ package ch.kra.todo.todo.data.remote.dto
 import android.os.Build
 import androidx.annotation.RequiresApi
 import ch.kra.todo.core.Constants.ZONE_ID
+import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.todo.domain.model.Todo
 import java.time.Instant
 import java.time.LocalDateTime
@@ -20,8 +21,8 @@ data class TodoDTO(
         return Todo(
             id = id,
             title = title,
-            createdAt = LocalDateTime.ofInstant(Instant.parse(createdAt), ZoneId.of(ZONE_ID)),
-            lastUpdatedAt = LocalDateTime.ofInstant(Instant.parse(lastUpdatedAt), ZoneId.of(ZONE_ID)),
+            createdAt = DateFormatUtil.fromISOInstantString(createdAt),
+            lastUpdatedAt = DateFormatUtil.fromISOInstantString(lastUpdatedAt),
             tasks = tasks?.map { it.toTask() }
         )
     }
