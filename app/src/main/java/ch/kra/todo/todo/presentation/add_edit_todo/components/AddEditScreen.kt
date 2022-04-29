@@ -81,7 +81,7 @@ fun AddEditScreen(
             Text(
                 modifier = Modifier
                     .padding(20.dp),
-                text = todoState.title,
+                text = todoState.title.ifEmpty { stringResource(R.string.new_todo) },
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
