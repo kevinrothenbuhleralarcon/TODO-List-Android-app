@@ -14,8 +14,7 @@ import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.data.remote.TodoApi
 import ch.kra.todo.todo.data.repository.TodoRepositoryImpl
 import ch.kra.todo.todo.domain.repository.TodoRepository
-import ch.kra.todo.todo.domain.use_case.GetTodo
-import ch.kra.todo.todo.domain.use_case.GetTodoList
+import ch.kra.todo.todo.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,5 +58,23 @@ object TodoModule {
     @Singleton
     fun provideGetTodo(todoRepository: TodoRepository): GetTodo {
         return GetTodo(todoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddTodo(todoRepository: TodoRepository): AddTodo {
+        return AddTodo(todoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateTodo(todoRepository: TodoRepository): UpdateTodo {
+        return UpdateTodo(todoRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteTodo(todoRepository: TodoRepository): DeleteTodo {
+        return DeleteTodo(todoRepository)
     }
 }
