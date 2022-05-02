@@ -43,7 +43,7 @@ fun AddEditScreen(
     val scaffoldState = rememberScaffoldState()
     val username = viewModel.username.value
     val currentTodoId = viewModel.currentTodoId
-    val todoState = viewModel.state.value
+    val todoState = viewModel.todoFormState.value
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -123,7 +123,7 @@ private fun TodoDetail(
         mutableStateOf(false)
     }
 
-    val todoState = viewModel.state.value
+    val todoState = viewModel.todoFormState.value
     val apiError = viewModel.apiError.value
 
     TodoCard {
