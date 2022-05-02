@@ -8,18 +8,36 @@ class DateFormatUtilTest {
     @Test
     fun testGetDateFormat() {
         val year = 2022
-        val month = 10
-        val day = 30
-        val hour = 20
-        val minutes = 30
-        val seconds = 50
+        val month = 4
+        val day = 2
+        val hour = 0
+        val minutes = 0
+        val seconds = 0
         val res = DateFormatUtil.fromDateTimeValues(year, month, day, hour, minutes, seconds)
-        assert(res.dayOfMonth == day)
-        assert(res.monthValue == month)
-        assert(res.year == year)
-        assert(res.hour == hour)
-        assert(res.minute == minutes)
-        assert(res.second == seconds)
+        assertEquals("Day doesn't match", res.dayOfMonth, day)
+        assertEquals("Month doesn't match", res.monthValue, month)
+        assertEquals("Year doesn't match", res.year, year)
+        assertEquals("Hour doesn't match", res.hour, hour)
+        assertEquals("Minute doesn't match", res.minute, minutes)
+        assertEquals("Second doesn't match", res.second, seconds)
+
+        val day2 = 29
+        val res2 = DateFormatUtil.fromDateTimeValues(year, month, day2, hour, minutes, seconds)
+        assertEquals("Day doesn't match", res2.dayOfMonth, day2)
+        assertEquals("Month doesn't match", res2.monthValue, month)
+        assertEquals("Year doesn't match", res2.year, year)
+        assertEquals("Hour doesn't match", res2.hour, hour)
+        assertEquals("Minute doesn't match", res2.minute, minutes)
+        assertEquals("Second doesn't match", res2.second, seconds)
+
+        val month2 = 6
+        val res3 = DateFormatUtil.fromDateTimeValues(year, month2, day2, hour, minutes, seconds)
+        assertEquals("Day doesn't match", res3.dayOfMonth, day2)
+        assertEquals("Month doesn't match", res3.monthValue, month2)
+        assertEquals("Year doesn't match", res3.year, year)
+        assertEquals("Hour doesn't match", res3.hour, hour)
+        assertEquals("Minute doesn't match", res3.minute, minutes)
+        assertEquals("Second doesn't match", res3.second, seconds)
     }
 
     @Test
@@ -28,9 +46,9 @@ class DateFormatUtilTest {
         val year = 2022
         val month = 4
         val day = 29
-        val hour = 0
-        val minutes = 0
-        val seconds = 0
+        val hour = 10
+        val minutes = 50
+        val seconds = 50
         val dateTime = DateFormatUtil.fromDateTimeValues(year, month, day, hour, minutes, seconds)
         val formattedString = DateFormatUtil.formatStringDateFromLocalDateTime(dateTime)
         assertEquals("Doesn't match: $formattedString", formattedString, expectedString)
@@ -46,8 +64,10 @@ class DateFormatUtilTest {
 
     @Test
     fun testFromCurrentTimeMillis() {
-        val localDateTime = DateFormatUtil.fromLong(System.currentTimeMillis())
+        val longDate = 1651474402231
+        val isoString = "2022-05-02T06:53:22.231Z"
+        val localDateTime = DateFormatUtil.fromLong(longDate)
         val resString = DateFormatUtil.toISOInstantString(localDateTime)
-        assertEquals("Doesn't match: $resString", resString, "")
+        assertEquals("Doesn't match:", resString, isoString)
     }
 }
