@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -119,6 +117,9 @@ private fun TodoDetail(
     currentTodoId: Int?,
     onEvent: (AddEditTodoEvent) -> Unit
 ) {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
     TodoCard {
         Column(
             horizontalAlignment = Alignment.End,
@@ -269,7 +270,7 @@ private fun TodoDetail(
                             .width(10.dp)
                     )
                     Button(
-                        onClick = { onEvent(AddEditTodoEvent.Delete) },
+                        onClick = { openDialog = true },
                         modifier = Modifier
                             .weight(1f)
                     ) {
@@ -277,6 +278,29 @@ private fun TodoDetail(
                             text = stringResource(R.string.delete),
                             textAlign = TextAlign.Center,
                             fontSize = 18.sp,
+                        )
+                    }
+                    
+                    if (openDialog) {
+                        AlertDialog(
+                            onDismissRequest = {  },
+                            title = { Text(text = stringResource(R.string.confirmation)) },
+                            text = { Text(text = stringResource(R.string.delete_dialog_text)) },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        openDialog = false
+                                        onEvent(AddEditTodoEvent.Delete)
+                                    }
+                                ) {
+                                    Text(text = stringResource(R.string.yes))
+                                }
+                            },
+                            dismissButton = {
+                                Button(onClick = { openDialog = false }) {
+                                    Text(text = stringResource(R.string.no))
+                                }
+                            }
                         )
                     }
                 }

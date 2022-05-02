@@ -20,4 +20,8 @@
     <string name="description">Description</string>
     <string name="add_task">Add Task</string>
     <string name="remove_task">Remove task</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="delete_dialog_text">Are you sure you want to delete this Todo?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
