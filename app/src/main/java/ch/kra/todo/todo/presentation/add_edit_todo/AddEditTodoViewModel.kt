@@ -73,7 +73,7 @@ class AddEditTodoViewModel @Inject constructor(
             }
 
             is AddEditTodoEvent.Delete -> {
-
+                deleteTodo()
             }
 
             is AddEditTodoEvent.NavigateBack -> {
@@ -240,6 +240,33 @@ class AddEditTodoViewModel @Inject constructor(
                         }
                     }
                 }.launchIn(this)
+        }
+    }
+
+    private fun deleteTodo() {
+        _currentTodoId?.let {
+            viewModelScope.launch {
+                deleteTodo(_token.value, it)
+                    .onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                sendUIEvent(UIEvent.PopBackStack)
+                            }
+
+                            is Resource.Error -> {
+                                /* TODO */
+                                Log.d("deleteTodo", result.message ?: "Error")
+                            }
+
+                            is Resource.Loading -> {
+                                state = state.copy(
+                                    isLoading = true
+                                )
+                            }
+                        }
+                    }.launchIn(this)
+
+            }
         }
     }
 
