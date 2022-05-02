@@ -7,5 +7,6 @@ data class LoginFormState(
     val usernameError: UIText? = null,
     val password: String = "",
     val passwordError: UIText? = null,
-    val passwordVisibility: Boolean = false
+    val passwordVisibility: Boolean = false,
+    val isLoading: Boolean = false
 )

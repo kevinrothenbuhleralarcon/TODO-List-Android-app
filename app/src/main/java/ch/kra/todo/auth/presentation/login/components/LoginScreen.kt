@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -36,6 +37,7 @@ import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.presentation.TodoCard
 import ch.kra.todo.core.presentation.Footer
 import ch.kra.todo.core.presentation.Header
+import ch.kra.todo.core.presentation.LoadingWrapper
 import ch.kra.todo.core.presentation.ui.theme.TextErrorColor
 import kotlinx.coroutines.flow.collect
 
@@ -45,15 +47,21 @@ fun LoginScreen(
     navigate: (UIEvent.Navigate) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
+    val loginFormState = viewModel.loginFormState.value
+
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UIEvent.Navigate -> navigate(event)
-
-                is UIEvent.DisplayLoading -> {
-                    /* TODO */
+                is UIEvent.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message.asString(context)
+                    )
                 }
+                is UIEvent.PopBackStack -> {}
+                is UIEvent.StartIntent -> {}
             }
         }
     }
@@ -88,11 +96,16 @@ fun LoginScreen(
                 fontSize = 32.sp,
                 fontWeight = Bold
             )
-            TodoCard() {
-                LoginForm(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                )
+            LoadingWrapper(
+                isLoading = loginFormState.isLoading,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TodoCard {
+                    LoginForm(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }

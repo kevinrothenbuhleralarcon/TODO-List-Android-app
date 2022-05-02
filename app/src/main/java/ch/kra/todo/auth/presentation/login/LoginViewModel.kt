@@ -102,6 +102,9 @@ class LoginViewModel @Inject constructor(
                 .onEach { result ->
                     when (result) {
                         is Resource.Success -> {
+                            _loginFormState.value = loginFormState.value.copy(
+                                isLoading = false
+                            )
                             // Store the token and username in the dataStore
                             settingsDataStore.saveTokenToPreferenceStore(result.data.token)
                             settingsDataStore.saveConnectedUserToPreferenceStore(result.data.username)
@@ -114,6 +117,9 @@ class LoginViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
+                            _loginFormState.value = loginFormState.value.copy(
+                                isLoading = false
+                            )
                             if (result.message.isNotEmpty()) {
                                 _apiError.value = UIText.DynamicString(result.message)
                             } else {
@@ -122,7 +128,9 @@ class LoginViewModel @Inject constructor(
                         }
 
                         is Resource.Loading -> {
-                            sendUIEvent(UIEvent.DisplayLoading)
+                            _loginFormState.value = loginFormState.value.copy(
+                                isLoading = true
+                            )
                         }
                     }
                 }.launchIn(this)
