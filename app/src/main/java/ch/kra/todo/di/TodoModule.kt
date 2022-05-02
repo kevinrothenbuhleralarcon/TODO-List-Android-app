@@ -91,4 +91,10 @@ object TodoModule {
     fun provideValidateTaskDescription(): ValidateTaskDescription {
         return ValidateTaskDescription()
     }
+
+    @Provides
+    @Singleton
+    fun provideValidateTaskEmpty(): ValidateTaskEmpty {
+        return ValidateTaskEmpty()
+    }
 }

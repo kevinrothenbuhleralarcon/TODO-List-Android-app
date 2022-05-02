@@ -91,7 +91,7 @@ class LoginViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            _errors.value = listOf(result.message ?: "An error occured")
+                            _errors.value = listOf(result.message ?: "An error occurred")
                         }
 
                         is Resource.Loading -> {

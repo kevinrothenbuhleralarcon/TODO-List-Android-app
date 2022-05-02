@@ -33,7 +33,13 @@ fun Navigation(navController: NavHostController) {
         composable(Routes.TODO_LIST) {
             TodoListScreen(
                 navigate = { event->
-                    navController.navigate(event.route)
+                    if (event.route == Routes.LOGIN) {
+                        navController.navigate(event.route) {
+                            popUpTo(Routes.TODO_LIST) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(event.route)
+                    }
                 }
             )
         }
@@ -49,7 +55,13 @@ fun Navigation(navController: NavHostController) {
         ) {
             AddEditScreen(
                 navigate = { event ->
-                    navController.navigate(event.route)
+                    if(event.route == Routes.LOGIN) {
+                        navController.navigate(event.route) {
+                            popUpTo(Routes.TODO_LIST) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(event.route)
+                    }
                 },
                 popBackStack =  {
                     navController.popBackStack()

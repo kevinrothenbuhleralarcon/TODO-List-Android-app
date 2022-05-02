@@ -7,6 +7,7 @@ data class TodoFormState(
     val titleError: String? = null,
     val createdAt: LocalDateTime? = null,
     val tasks: List<TaskFormState> = emptyList(),
+    val tasksEmptyError: String? = null,
     val isLoading: Boolean = false
 )
 

@@ -104,7 +104,6 @@ fun AddEditScreen(
                 isLoading = todoState.isLoading
             ) {
                 TodoDetail(
-                    todoState = todoState,
                     currentTodoId = currentTodoId,
                     onEvent = viewModel::onEvent
                 )
@@ -117,13 +116,17 @@ fun AddEditScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun TodoDetail(
-    todoState: TodoFormState,
+    viewModel: AddEditTodoViewModel = hiltViewModel(),
     currentTodoId: Int?,
     onEvent: (AddEditTodoEvent) -> Unit
 ) {
     var openDialog by remember {
         mutableStateOf(false)
     }
+
+    val todoState = viewModel.state
+    val apiError = viewModel.apiError.value
+
     TodoCard {
         Column(
             horizontalAlignment = Alignment.End,
@@ -131,14 +134,36 @@ private fun TodoDetail(
                 .fillMaxSize()
         ) {
 
+            if(apiError.isNotEmpty()) {
+                Text(
+                    text = apiError,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
             OutlinedTextField(
                 value = todoState.title,
                 onValueChange = { onEvent(AddEditTodoEvent.TitleChanged(it)) },
                 label = { Text(text = stringResource(R.string.title)) },
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                isError = todoState.titleError != null
             )
+            if (todoState.titleError != null) {
+                Text(
+                    text = todoState.titleError,
+                    color = MaterialTheme.colors.error
+                )
+            }
 
+            if(todoState.tasksEmptyError != null) {
+                Text(
+                    text = todoState.tasksEmptyError,
+                    color = MaterialTheme.colors.error
+                )
+            }
             LazyColumn(
                 contentPadding = PaddingValues(top = 10.dp),
                 modifier = Modifier
@@ -196,8 +221,15 @@ private fun TodoDetail(
                                     } else {
                                         TextDecoration.None
                                     }
-                                )
+                                ),
+                                isError = todoState.tasks[taskId].descriptionError != null
                             )
+                            if (todoState.tasks[taskId].descriptionError != null) {
+                                Text(
+                                    text = todoState.tasks[taskId].descriptionError!!,
+                                    color = MaterialTheme.colors.error
+                                )
+                            }
 
                             Row(
                                 horizontalArrangement = Arrangement.End,

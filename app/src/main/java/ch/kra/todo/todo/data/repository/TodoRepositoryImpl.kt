@@ -3,6 +3,7 @@ package ch.kra.todo.todo.data.repository
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import ch.kra.todo.core.Constants.INVALID_TOKEN
 import ch.kra.todo.core.Resource
 import ch.kra.todo.todo.data.remote.TodoApi
 import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
@@ -24,9 +25,13 @@ class TodoRepositoryImpl(
             val todoList = todoApi.getTodoList(token).todos.map { it.toTodo() }
             emit(Resource.Success(data = todoList))
         } catch (e: HttpException) {
-            emit(Resource.Error(
-                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
-            ))
+            if (e.response()?.code() == 401) {
+                emit(Resource.Error(message = INVALID_TOKEN))
+            } else {
+                emit(Resource.Error(
+                    message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+                ))
+            }
         } catch (e: IOException) {
             emit(Resource.Error(
                 message = e.message ?: "Could not reach server, check your internet connection."
@@ -41,9 +46,13 @@ class TodoRepositoryImpl(
             val todo = todoApi.getTodo(token, todoId).todo.toTodo()
             emit(Resource.Success(data = todo))
         } catch (e: HttpException) {
-            emit(Resource.Error(
-                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
-            ))
+            if (e.response()?.code() == 401) {
+                emit(Resource.Error(message = INVALID_TOKEN))
+            } else {
+                emit(Resource.Error(
+                    message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+                ))
+            }
         } catch (e: IOException) {
             emit(Resource.Error(
                 message = e.message ?: "Could not reach server, check your internet connection."
@@ -57,6 +66,8 @@ class TodoRepositoryImpl(
             val response = todoApi.addTodo(token, request)
             if (response.isSuccessful) {
                 emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else if (response.code() == 401) {
+                emit(Resource.Error(message = INVALID_TOKEN))
             } else {
                 emit(Resource.Error(message = response.body() ?: "Error"))
             }
@@ -77,6 +88,8 @@ class TodoRepositoryImpl(
             val response = todoApi.updateTodo(token, request)
             if (response.isSuccessful) {
                 emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else if (response.code() == 401) {
+                emit(Resource.Error(message = INVALID_TOKEN))
             } else {
                 emit(Resource.Error(message = response.body() ?: "Error"))
             }
@@ -97,6 +110,8 @@ class TodoRepositoryImpl(
             val response = todoApi.deleteTodo(token, todoId)
             if (response.isSuccessful) {
                 emit(Resource.Success(data = response.body() ?: "Ok"))
+            } else if (response.code() == 401) {
+                emit(Resource.Error(message = INVALID_TOKEN))
             } else {
                 emit(Resource.Error(message = response.body() ?: "Error"))
             }

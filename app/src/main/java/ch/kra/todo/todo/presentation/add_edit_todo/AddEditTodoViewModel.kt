@@ -10,17 +10,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.todo.core.Constants.INVALID_TOKEN
 import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.core.Resource
+import ch.kra.todo.core.Routes
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.data.remote.dto.TaskDTO
 import ch.kra.todo.todo.data.remote.dto.TodoDTO
 import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
-import ch.kra.todo.todo.domain.use_case.AddTodo
-import ch.kra.todo.todo.domain.use_case.DeleteTodo
-import ch.kra.todo.todo.domain.use_case.GetTodo
-import ch.kra.todo.todo.domain.use_case.UpdateTodo
+import ch.kra.todo.todo.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -38,6 +37,9 @@ class AddEditTodoViewModel @Inject constructor(
     private val addTodo: AddTodo,
     private val updateTodo: UpdateTodo,
     private val deleteTodo: DeleteTodo,
+    private val validateTaskDescription: ValidateTaskDescription,
+    private val validateTodoTitle: ValidateTodoTitle,
+    private val validateTaskEmpty: ValidateTaskEmpty,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -46,6 +48,9 @@ class AddEditTodoViewModel @Inject constructor(
     val username: State<String> = _username
 
     var state by mutableStateOf(TodoFormState())
+
+    private val _apiError = mutableStateOf("")
+    val apiError: State<String> = _apiError
 
     private var _currentTodoId: Int? = null
     val currentTodoId get() = _currentTodoId
@@ -66,10 +71,7 @@ class AddEditTodoViewModel @Inject constructor(
     fun onEvent(event: AddEditTodoEvent) {
         when (event) {
             is AddEditTodoEvent.Save -> {
-                /* TODO validate form */
-                _currentTodoId?.let {
-                    updateTodo()
-                } ?: addTodo()
+                submitData()
             }
 
             is AddEditTodoEvent.Delete -> {
@@ -150,9 +152,20 @@ class AddEditTodoViewModel @Inject constructor(
                             state = state.copy(
                                 isLoading = false
                             )
-                            sendUIEvent(UIEvent.ShowSnackbar(
-                                message = result.message ?: "Unknown error"
-                            ))
+                            if (result.message == INVALID_TOKEN) {
+                                sendUIEvent(
+                                    UIEvent.Navigate(
+                                        Routes.LOGIN
+                                    )
+                                )
+                            } else {
+                                sendUIEvent(
+                                    UIEvent.ShowSnackbar(
+                                        message = result.message ?: "Unknown error"
+                                    )
+                                )
+                            }
+
                         }
 
                         is Resource.Loading -> {
@@ -166,14 +179,46 @@ class AddEditTodoViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private fun submitData() {
+        val titleResult = validateTodoTitle(state.title)
+        val taskEmpty = validateTaskEmpty(state.tasks)
+        val tasksDetailResult = state.tasks.map { validateTaskDescription(it.description) }
+
+        val hasError = listOf(
+            titleResult,
+            taskEmpty
+        ).plus(tasksDetailResult)
+            .any { !it.sucessful }
+        if (hasError) {
+            var i = 0
+            val tasks = state.tasks.map { task ->
+                val copy = task.copy(descriptionError = tasksDetailResult[i].errorMessage)
+                i++
+                copy
+            }
+            state = state.copy(
+                titleError = titleResult.errorMessage,
+                tasksEmptyError = taskEmpty.errorMessage,
+                tasks = tasks
+            )
+            return
+        }
+        _currentTodoId?.let {
+            updateTodo()
+        } ?: addTodo()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun addTodo() {
-        val tasks = state.tasks.map { task -> TaskDTO(
-            id = task.id,
-            description = task.description,
-            deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
-            status = task.status,
-            todoId = null
-        ) }
+        val tasks = state.tasks.map { task ->
+            TaskDTO(
+                id = task.id,
+                description = task.description,
+                deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
+                status = task.status,
+                todoId = null
+            )
+        }
         val todo = TodoDTO(
             id = null,
             title = state.title,
@@ -190,8 +235,18 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            /* TODO */
-                            Log.d("addTodo", result.message ?: "Error")
+                            state = state.copy(
+                                isLoading = false
+                            )
+                            if (result.message == INVALID_TOKEN) {
+                                sendUIEvent(
+                                    UIEvent.Navigate(
+                                        Routes.LOGIN
+                                    )
+                                )
+                            } else {
+                                _apiError.value = result.message ?: "An error occurred"
+                            }
                         }
 
                         is Resource.Loading -> {
@@ -206,13 +261,15 @@ class AddEditTodoViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateTodo() {
-        val tasks = state.tasks.map { task -> TaskDTO(
-            id = task.id,
-            description = task.description,
-            deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
-            status = task.status,
-            todoId = _currentTodoId
-        ) }
+        val tasks = state.tasks.map { task ->
+            TaskDTO(
+                id = task.id,
+                description = task.description,
+                deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
+                status = task.status,
+                todoId = _currentTodoId
+            )
+        }
         val todo = TodoDTO(
             id = _currentTodoId,
             title = state.title,
@@ -229,8 +286,18 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            /* TODO */
-                            Log.d("updateTodo", result.message ?: "Error")
+                            state = state.copy(
+                                isLoading = false
+                            )
+                            if (result.message == INVALID_TOKEN) {
+                                sendUIEvent(
+                                    UIEvent.Navigate(
+                                        Routes.LOGIN
+                                    )
+                                )
+                            } else {
+                                _apiError.value = result.message ?: "An error occurred"
+                            }
                         }
 
                         is Resource.Loading -> {
@@ -254,8 +321,18 @@ class AddEditTodoViewModel @Inject constructor(
                             }
 
                             is Resource.Error -> {
-                                /* TODO */
-                                Log.d("deleteTodo", result.message ?: "Error")
+                                state = state.copy(
+                                    isLoading = false
+                                )
+                                if (result.message == INVALID_TOKEN) {
+                                    sendUIEvent(
+                                        UIEvent.Navigate(
+                                            Routes.LOGIN
+                                        )
+                                    )
+                                } else {
+                                    _apiError.value = result.message ?: "An error occurred"
+                                }
                             }
 
                             is Resource.Loading -> {

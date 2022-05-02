@@ -50,7 +50,9 @@ fun TodoListScreen(
                 }
 
                 is UIEvent.ShowSnackbar -> {
-
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
                 }
             }
         }

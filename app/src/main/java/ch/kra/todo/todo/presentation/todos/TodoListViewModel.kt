@@ -7,10 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ch.kra.todo.core.DateFormatUtil
-import ch.kra.todo.core.Resource
-import ch.kra.todo.core.Routes
-import ch.kra.todo.core.UIEvent
+import ch.kra.todo.core.*
 import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.domain.use_case.GetTodoList
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -74,7 +71,6 @@ class TodoListViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getTodoList() {
-        Log.d("TodoList", "LoadList")
         viewModelScope.launch {
             getTodoList(_token.value)
                 .onEach { result ->
@@ -91,10 +87,15 @@ class TodoListViewModel @Inject constructor(
                             todoList = result.data ?: emptyList(),
                             isLoading = false
                         )
-                        /* TODO: Check if connection error and redirect */
-                        sendUIEvent(UIEvent.ShowSnackbar(
-                            result.message ?: "Unknown error"
-                        ))
+                        if (result.message == Constants.INVALID_TOKEN) {
+                            sendUIEvent(UIEvent.Navigate(
+                                Routes.LOGIN
+                            ))
+                        } else {
+                            sendUIEvent(UIEvent.ShowSnackbar(
+                                result.message ?: "Unknown error"
+                            ))
+                        }
                     }
 
                     is Resource.Loading -> {
