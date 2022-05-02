@@ -1,13 +1,12 @@
 package ch.kra.todo.auth.presentation.login
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.todo.auth.domain.use_case.Login
+import ch.kra.todo.auth.domain.use_case.ValidatePassword
+import ch.kra.todo.auth.domain.use_case.ValidateUsername
 import ch.kra.todo.core.Resource
 import ch.kra.todo.core.Routes
 import ch.kra.todo.core.UIEvent
@@ -22,21 +21,16 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val login: Login,
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore,
+    private val validateUsername: ValidateUsername,
+    private val validatePassword: ValidatePassword
 ): ViewModel() {
 
-    private val _username = mutableStateOf("")
-    val username: State<String> = _username
+    private val _loginFormState = mutableStateOf(LoginFormState())
+    val loginFormState: State<LoginFormState> = _loginFormState
 
-    private val _password = mutableStateOf("")
-    val password: State<String> = _password
-
-    private val _passwordVisible = mutableStateOf(false)
-    val passwordVisible: State<Boolean> = _passwordVisible
-
-    private val _errors = mutableStateOf(listOf<String>())
-    val errors: State<List<String>> = _errors
-
+    private val _apiError = mutableStateOf("")
+    val apiError: State<String> = _apiError
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -44,19 +38,19 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: AuthListEvent) {
         when (event) {
             is AuthListEvent.EnteredUsername -> {
-                _username.value = event.value
+                _loginFormState.value = loginFormState.value.copy(
+                    username = event.value
+                )
             }
 
             is AuthListEvent.EnteredPassword -> {
-                _password.value = event.value
+                _loginFormState.value = loginFormState.value.copy(
+                    password = event.value
+                )
             }
 
             is AuthListEvent.Login -> {
-
-                _errors.value = validateForm()
-                if(errors.value.isEmpty()) {
-                    sendLoginRequest()
-                }
+                submitData()
             }
 
             is AuthListEvent.OnNavigateToWebClient -> {
@@ -64,10 +58,14 @@ class LoginViewModel @Inject constructor(
             }
 
             is AuthListEvent.TogglePasswordVisibility -> {
-                _passwordVisible.value = !passwordVisible.value
+                _loginFormState.value = loginFormState.value.copy(
+                    passwordVisibility = !loginFormState.value.passwordVisibility
+                )
             }
         }
     }
+
+
 
     private fun sendUIEvent(event: UIEvent) {
         viewModelScope.launch {
@@ -75,9 +73,32 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    private fun submitData() {
+        _loginFormState.value = loginFormState.value.copy(
+            usernameError = null,
+            passwordError = null
+        )
+        val usernameResult = validateUsername(loginFormState.value.username)
+        val passwordResult = validatePassword(loginFormState.value.password)
+
+        val hasError = listOf(
+            usernameResult,
+            passwordResult
+        ).any { !it.sucessful }
+
+        if (hasError) {
+            _loginFormState.value = loginFormState.value.copy(
+                usernameError = usernameResult.errorMessage,
+                passwordError = passwordResult.errorMessage
+            )
+        } else {
+            sendLoginRequest()
+        }
+    }
+
     private fun sendLoginRequest() {
         viewModelScope.launch(Dispatchers.IO) {
-            login(username.value, password.value)
+            login(loginFormState.value.username, loginFormState.value.password)
                 .onEach { result ->
                     when (result) {
                         is Resource.Success -> {
@@ -91,7 +112,7 @@ class LoginViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            _errors.value = listOf(result.message ?: "An error occurred")
+                            _apiError.value = result.message ?: "An error occurred"
                         }
 
                         is Resource.Loading -> {
@@ -100,12 +121,5 @@ class LoginViewModel @Inject constructor(
                     }
                 }.launchIn(this)
         }
-    }
-
-    private fun validateForm(): List<String> {
-        val validateErrors = mutableListOf<String>()
-        if(username.value.isEmpty()) validateErrors.add("Username cannot be empty")
-        if(password.value.isEmpty()) validateErrors.add("Password cannot be empty")
-        return validateErrors
     }
 }

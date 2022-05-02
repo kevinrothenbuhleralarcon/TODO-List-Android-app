@@ -103,10 +103,8 @@ private fun LoginForm(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val username = viewModel.username.value
-    val password = viewModel.password.value
-    val passwordVisible = viewModel.passwordVisible.value
-    val errors = viewModel.errors.value
+    val loginFormState = viewModel.loginFormState.value
+    val error = viewModel.apiError.value
 
     Column(modifier = modifier) {
         Text(
@@ -122,7 +120,7 @@ private fun LoginForm(
             modifier= Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp),
-            text = errors.joinToString("\n"),
+            text = error,
             fontSize = 16.sp,
             fontWeight = Bold,
             color = TextErrorColor
@@ -130,28 +128,37 @@ private fun LoginForm(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = username,
+            value = loginFormState.username,
             onValueChange = {
                 viewModel.onEvent(AuthListEvent.EnteredUsername(it))
             },
             label = { Text(text = stringResource(R.string.username)) },
             singleLine = true,
+            isError = loginFormState.usernameError != null
         )
+
+        if (loginFormState.usernameError != null) {
+            Text(
+                text = loginFormState.usernameError,
+                color = MaterialTheme.colors.error
+            )
+        }
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = password,
+            value = loginFormState.password,
             onValueChange = {
                 viewModel.onEvent(AuthListEvent.EnteredPassword(it))
             },
             label = { Text(text = stringResource(R.string.password)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (loginFormState.passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image =
-                    if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                val description = if (passwordVisible)
+                    if (loginFormState.passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val description = if (loginFormState.passwordVisibility)
                     stringResource(R.string.hide_password)
                 else stringResource(R.string.show_password)
                 IconButton(onClick = { viewModel.onEvent(AuthListEvent.TogglePasswordVisibility) }) {
@@ -160,8 +167,17 @@ private fun LoginForm(
                         contentDescription = description
                     )
                 }
-            }
+            },
+            isError = loginFormState.passwordError != null
         )
+
+        if (loginFormState.passwordError != null) {
+            Text(
+                text = loginFormState.passwordError,
+                color = MaterialTheme.colors.error
+            )
+        }
+
         Button(
             onClick = { viewModel.onEvent(AuthListEvent.Login) },
             modifier = Modifier
