@@ -58,8 +58,12 @@ fun AddEditScreen(
                 }
 
                 is UIEvent.ShowSnackbar -> {
-
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
                 }
+
+                else -> {}
             }
         }
     }
