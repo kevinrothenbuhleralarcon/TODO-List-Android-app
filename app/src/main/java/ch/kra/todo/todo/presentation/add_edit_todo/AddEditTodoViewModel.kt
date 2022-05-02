@@ -1,7 +1,6 @@
 package ch.kra.todo.todo.presentation.add_edit_todo
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +45,8 @@ class AddEditTodoViewModel @Inject constructor(
     private val _username = mutableStateOf("")
     val username: State<String> = _username
 
-    var state by mutableStateOf(TodoFormState())
+    private val _state = mutableStateOf(TodoFormState())
+    val state: State<TodoFormState> = _state
 
     private val _apiError = mutableStateOf("")
     val apiError: State<String> = _apiError
@@ -83,37 +82,37 @@ class AddEditTodoViewModel @Inject constructor(
             }
 
             is AddEditTodoEvent.TitleChanged -> {
-                state = state.copy(title = event.value)
+                _state.value = _state.value.copy(title = event.value)
             }
 
             is AddEditTodoEvent.DescriptionChanged -> {
-                val tasks = state.tasks.toMutableList()
+                val tasks = _state.value.tasks.toMutableList()
                 tasks[event.id] = tasks[event.id].copy(description = event.value)
-                state = state.copy(tasks = tasks)
+                _state.value = _state.value.copy(tasks = tasks)
             }
 
             is AddEditTodoEvent.StatusChanged -> {
-                val tasks = state.tasks.toMutableList()
+                val tasks = _state.value.tasks.toMutableList()
                 tasks[event.id] = tasks[event.id].copy(status = event.value)
-                state = state.copy(tasks = tasks)
+                _state.value = _state.value.copy(tasks = tasks)
             }
 
             is AddEditTodoEvent.DeadlineChanged -> {
-                val tasks = state.tasks.toMutableList()
+                val tasks = _state.value.tasks.toMutableList()
                 tasks[event.id] = tasks[event.id].copy(deadline = event.value)
-                state = state.copy(tasks = tasks)
+                _state.value = _state.value.copy(tasks = tasks)
             }
 
             is AddEditTodoEvent.AddTask -> {
-                val tasks = state.tasks.toMutableList()
+                val tasks = _state.value.tasks.toMutableList()
                 tasks.add(TaskFormState())
-                state = state.copy(tasks = tasks)
+                _state.value = _state.value.copy(tasks = tasks)
             }
 
             is AddEditTodoEvent.RemoveTask -> {
-                val tasks = state.tasks.toMutableList()
+                val tasks = _state.value.tasks.toMutableList()
                 tasks.removeAt(event.id)
-                state = state.copy(tasks = tasks)
+                _state.value = _state.value.copy(tasks = tasks)
             }
         }
     }
@@ -132,7 +131,7 @@ class AddEditTodoViewModel @Inject constructor(
                         is Resource.Success -> {
                             result.data?.let {
                                 _currentTodoId = it.id
-                                state = state.copy(
+                                _state.value = _state.value.copy(
                                     title = it.title,
                                     createdAt = it.createdAt,
                                     tasks = it.tasks?.map { task ->
@@ -149,7 +148,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = false
                             )
                             if (result.message == INVALID_TOKEN) {
@@ -169,7 +168,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Loading -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = true
                             )
                         }
@@ -180,9 +179,9 @@ class AddEditTodoViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun submitData() {
-        val titleResult = validateTodoTitle(state.title)
-        val taskEmpty = validateTaskEmpty(state.tasks)
-        val tasksDetailResult = state.tasks.map { validateTaskDescription(it.description) }
+        val titleResult = validateTodoTitle(_state.value.title)
+        val taskEmpty = validateTaskEmpty(_state.value.tasks)
+        val tasksDetailResult = _state.value.tasks.map { validateTaskDescription(it.description) }
 
         val hasError = listOf(
             titleResult,
@@ -191,12 +190,12 @@ class AddEditTodoViewModel @Inject constructor(
             .any { !it.sucessful }
         if (hasError) {
             var i = 0
-            val tasks = state.tasks.map { task ->
+            val tasks = _state.value.tasks.map { task ->
                 val copy = task.copy(descriptionError = tasksDetailResult[i].errorMessage)
                 i++
                 copy
             }
-            state = state.copy(
+            _state.value = _state.value.copy(
                 titleError = titleResult.errorMessage,
                 tasksEmptyError = taskEmpty.errorMessage,
                 tasks = tasks
@@ -210,7 +209,7 @@ class AddEditTodoViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun addTodo() {
-        val tasks = state.tasks.map { task ->
+        val tasks = _state.value.tasks.map { task ->
             TaskDTO(
                 id = task.id,
                 description = task.description,
@@ -221,7 +220,7 @@ class AddEditTodoViewModel @Inject constructor(
         }
         val todo = TodoDTO(
             id = null,
-            title = state.title,
+            title = _state.value.title,
             createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
             lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
             tasks = tasks
@@ -235,7 +234,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = false
                             )
                             if (result.message == INVALID_TOKEN) {
@@ -250,7 +249,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Loading -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = true
                             )
                         }
@@ -261,7 +260,7 @@ class AddEditTodoViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateTodo() {
-        val tasks = state.tasks.map { task ->
+        val tasks = _state.value.tasks.map { task ->
             TaskDTO(
                 id = task.id,
                 description = task.description,
@@ -272,7 +271,7 @@ class AddEditTodoViewModel @Inject constructor(
         }
         val todo = TodoDTO(
             id = _currentTodoId,
-            title = state.title,
+            title = _state.value.title,
             createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
             lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
             tasks = tasks
@@ -286,7 +285,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = false
                             )
                             if (result.message == INVALID_TOKEN) {
@@ -301,7 +300,7 @@ class AddEditTodoViewModel @Inject constructor(
                         }
 
                         is Resource.Loading -> {
-                            state = state.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = true
                             )
                         }
@@ -321,7 +320,7 @@ class AddEditTodoViewModel @Inject constructor(
                             }
 
                             is Resource.Error -> {
-                                state = state.copy(
+                                _state.value = _state.value.copy(
                                     isLoading = false
                                 )
                                 if (result.message == INVALID_TOKEN) {
@@ -336,7 +335,7 @@ class AddEditTodoViewModel @Inject constructor(
                             }
 
                             is Resource.Loading -> {
-                                state = state.copy(
+                                _state.value = _state.value.copy(
                                     isLoading = true
                                 )
                             }

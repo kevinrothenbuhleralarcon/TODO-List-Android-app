@@ -31,7 +31,6 @@ import ch.kra.todo.core.presentation.ui.shared_composable.DatePicker
 import ch.kra.todo.core.presentation.ui.theme.BorderColor
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoEvent
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoViewModel
-import ch.kra.todo.todo.presentation.add_edit_todo.TodoFormState
 import kotlinx.coroutines.flow.collect
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,7 +43,7 @@ fun AddEditScreen(
     val scaffoldState = rememberScaffoldState()
     val username = viewModel.username.value
     val currentTodoId = viewModel.currentTodoId
-    val todoState = viewModel.state
+    val todoState = viewModel.state.value
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -124,7 +123,7 @@ private fun TodoDetail(
         mutableStateOf(false)
     }
 
-    val todoState = viewModel.state
+    val todoState = viewModel.state.value
     val apiError = viewModel.apiError.value
 
     TodoCard {
