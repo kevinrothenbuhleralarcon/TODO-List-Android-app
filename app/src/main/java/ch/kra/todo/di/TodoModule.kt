@@ -79,4 +79,16 @@ object TodoModule {
     fun provideDeleteTodo(todoRepository: TodoRepository): DeleteTodo {
         return DeleteTodo(todoRepository)
     }
+
+    @Provides
+    @Singleton
+    fun provideValidateTodoTitle(): ValidateTodoTitle {
+        return ValidateTodoTitle()
+    }
+
+    @Provides
+    @Singleton
+    fun provideValidateTaskDescription(): ValidateTaskDescription {
+        return ValidateTaskDescription()
+    }
 }
