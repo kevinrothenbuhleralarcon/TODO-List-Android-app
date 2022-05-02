@@ -67,7 +67,9 @@ class AddEditTodoViewModel @Inject constructor(
         when (event) {
             is AddEditTodoEvent.Save -> {
                 /* TODO validate form */
-                addTodo()
+                _currentTodoId?.let {
+                    updateTodo()
+                } ?: addTodo()
             }
 
             is AddEditTodoEvent.Delete -> {
@@ -190,6 +192,45 @@ class AddEditTodoViewModel @Inject constructor(
                         is Resource.Error -> {
                             /* TODO */
                             Log.d("addTodo", result.message ?: "Error")
+                        }
+
+                        is Resource.Loading -> {
+                            state = state.copy(
+                                isLoading = true
+                            )
+                        }
+                    }
+                }.launchIn(this)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateTodo() {
+        val tasks = state.tasks.map { task -> TaskDTO(
+            id = task.id,
+            description = task.description,
+            deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
+            status = task.status,
+            todoId = _currentTodoId
+        ) }
+        val todo = TodoDTO(
+            id = _currentTodoId,
+            title = state.title,
+            createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            tasks = tasks
+        )
+        viewModelScope.launch {
+            updateTodo(_token.value, AddEditTodoRequestDTO(todo))
+                .onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            sendUIEvent(UIEvent.PopBackStack)
+                        }
+
+                        is Resource.Error -> {
+                            /* TODO */
+                            Log.d("updateTodo", result.message ?: "Error")
                         }
 
                         is Resource.Loading -> {

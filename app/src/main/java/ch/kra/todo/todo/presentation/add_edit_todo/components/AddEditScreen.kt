@@ -175,6 +175,7 @@ private fun TodoDetail(
                             OutlinedTextField(
                                 value = todoState.tasks[taskId].description,
                                 label = { Text(text = stringResource(R.string.description)) },
+                                singleLine = true,
                                 onValueChange = {
                                     onEvent(
                                         AddEditTodoEvent.DescriptionChanged(
