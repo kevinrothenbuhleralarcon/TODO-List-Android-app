@@ -16,7 +16,7 @@ class ValidateTaskEmptyTest {
     @Test
     fun `Task list is empty, returns error`() {
         val result = validateTaskEmpty(emptyList())
-        assertEquals(result.sucessful, false)
+        assertEquals(result.successful, false)
     }
 
     @Test
@@ -26,6 +26,6 @@ class ValidateTaskEmptyTest {
             TaskFormState()
         )
         val result = validateTaskEmpty(tasks)
-        assertEquals(result.sucessful, true)
+        assertEquals(result.successful, true)
     }
 }

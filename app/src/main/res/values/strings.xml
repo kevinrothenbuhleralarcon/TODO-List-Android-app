@@ -31,4 +31,5 @@
     <string name="todo_title_error">The title cannot be blank</string>
     <string name="password_error">Password cannot be empty</string>
     <string name="username_error">Username cannot be empty</string>
+    <string name="author">Author: Kevin Rothenbühler-Alarcon</string>
 </resources>

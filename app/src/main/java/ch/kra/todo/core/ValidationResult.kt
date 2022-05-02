@@ -1,6 +1,6 @@
 package ch.kra.todo.core
 
 data class ValidationResult(
-    val sucessful: Boolean,
+    val successful: Boolean,
     val errorMessage: UIText? = null
 )

@@ -9,12 +9,12 @@ class ValidateTodoTitle {
     operator fun invoke(title: String): ValidationResult {
         if (title.isBlank()) {
             return ValidationResult(
-                sucessful = false,
+                successful = false,
                 errorMessage = UIText.StringResource(R.string.todo_title_error)
             )
         }
         return ValidationResult(
-            sucessful = true
+            successful = true
         )
     }
 }

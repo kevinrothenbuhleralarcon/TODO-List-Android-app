@@ -15,12 +15,12 @@ class ValidateTaskDescriptionTest {
     @Test
     fun `Description is empty, return error`() {
         val result = validateTaskDescription("")
-        assertEquals(result.sucessful, false)
+        assertEquals(result.successful, false)
     }
 
     @Test
     fun `Description is not empty, return success`() {
         val result = validateTaskDescription("Task 1")
-        assertEquals(result.sucessful, true)
+        assertEquals(result.successful, true)
     }
 }

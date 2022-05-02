@@ -8,12 +8,12 @@ class ValidatePassword {
     operator fun invoke(password: String): ValidationResult {
         if (password.isEmpty()) {
             return ValidationResult(
-                sucessful = false,
+                successful = false,
                 errorMessage = UIText.StringResource(R.string.password_error)
             )
         }
         return ValidationResult(
-            sucessful = true
+            successful = true
         )
     }
 }

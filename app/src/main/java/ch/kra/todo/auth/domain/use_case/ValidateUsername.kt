@@ -8,12 +8,12 @@ class ValidateUsername {
     operator fun invoke(username: String): ValidationResult {
         if (username.isEmpty()) {
             return ValidationResult(
-                sucessful = false,
+                successful = false,
                 errorMessage = UIText.StringResource(R.string.username_error)
             )
         }
         return ValidationResult(
-            sucessful = true
+            successful = true
         )
     }
 }

@@ -1,4 +1,4 @@
-package ch.kra.todo.core.presentation
+package ch.kra.todo.core.presentation.ui.shared_composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.CircularProgressIndicator

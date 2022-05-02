@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-/*private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = CONNECTION_PREFERENCE_NAME
-)*/
-
 class SettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKeys {
         val TOKEN = stringPreferencesKey("token")

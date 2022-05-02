@@ -34,10 +34,10 @@ import ch.kra.todo.R
 import ch.kra.todo.auth.presentation.login.AuthListEvent
 import ch.kra.todo.auth.presentation.login.LoginViewModel
 import ch.kra.todo.core.UIEvent
-import ch.kra.todo.core.presentation.TodoCard
-import ch.kra.todo.core.presentation.Footer
-import ch.kra.todo.core.presentation.Header
-import ch.kra.todo.core.presentation.LoadingWrapper
+import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
+import ch.kra.todo.core.presentation.ui.shared_composable.Footer
+import ch.kra.todo.core.presentation.ui.shared_composable.Header
+import ch.kra.todo.core.presentation.ui.shared_composable.LoadingWrapper
 import ch.kra.todo.core.presentation.ui.theme.TextErrorColor
 import kotlinx.coroutines.flow.collect
 

@@ -15,12 +15,12 @@ class ValidateUsernameTest {
     @Test
     fun `Username is empty, return error`() {
         val result = validateUsername("")
-        assertEquals(result.sucessful, false)
+        assertEquals(result.successful, false)
     }
 
     @Test
     fun `Username is not empty, return success`() {
         val result = validateUsername("kevin")
-        assertEquals(result.sucessful, true)
+        assertEquals(result.successful, true)
     }
 }

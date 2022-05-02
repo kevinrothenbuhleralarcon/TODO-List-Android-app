@@ -15,12 +15,12 @@ class ValidateTodoTitleTest {
     @Test
     fun `Title is empty, return error`() {
         val result = validateTodoTitle("")
-        assertEquals(result.sucessful, false)
+        assertEquals(result.successful, false)
     }
 
     @Test
     fun `Title is not empty, return success`() {
         val result = validateTodoTitle("Todo 1")
-        assertEquals(result.sucessful, true)
+        assertEquals(result.successful, true)
     }
 }

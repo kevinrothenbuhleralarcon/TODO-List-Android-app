@@ -84,7 +84,7 @@ class LoginViewModel @Inject constructor(
         val hasError = listOf(
             usernameResult,
             passwordResult
-        ).any { !it.sucessful }
+        ).any { !it.successful }
 
         if (hasError) {
             _loginFormState.value = loginFormState.value.copy(

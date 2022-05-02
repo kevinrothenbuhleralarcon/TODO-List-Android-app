@@ -9,12 +9,12 @@ class ValidateTaskEmpty {
     operator fun invoke(tasks: List<TaskFormState>): ValidationResult {
         if (tasks.isEmpty()) {
             return ValidationResult(
-                sucessful = false,
+                successful = false,
                 errorMessage = UIText.StringResource(R.string.empty_tasks_error)
             )
         }
         return ValidationResult(
-            sucessful = true
+            successful = true
         )
     }
 }

@@ -9,12 +9,12 @@ class ValidateTaskDescription {
     operator fun invoke(description: String): ValidationResult {
         if (description.isBlank()) {
             return ValidationResult(
-                sucessful = false,
+                successful = false,
                 errorMessage = UIText.StringResource(R.string.description_error)
             )
         }
         return ValidationResult(
-            sucessful = true
+            successful = true
         )
     }
 }

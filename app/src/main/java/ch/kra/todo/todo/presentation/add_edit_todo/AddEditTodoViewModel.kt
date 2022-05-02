@@ -192,7 +192,7 @@ class AddEditTodoViewModel @Inject constructor(
             titleResult,
             taskEmpty
         ).plus(tasksDetailResult)
-            .any { !it.sucessful }
+            .any { !it.successful }
         if (hasError) {
             var i = 0
             _todoFormState.value = _todoFormState.value.copy(

@@ -1,4 +1,4 @@
-package ch.kra.todo.core.presentation
+package ch.kra.todo.core.presentation.ui.shared_composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import ch.kra.todo.R
 import ch.kra.todo.core.presentation.ui.theme.BorderColor
 
 @Composable
@@ -19,6 +21,6 @@ fun Footer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(text = "Author: Kevin Rothenbühler-Alarcon")
+        Text(text = stringResource(R.string.author))
     }
 }

@@ -22,10 +22,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.core.UIEvent
-import ch.kra.todo.core.presentation.Footer
-import ch.kra.todo.core.presentation.Header
-import ch.kra.todo.core.presentation.LoadingWrapper
-import ch.kra.todo.core.presentation.TodoCard
+import ch.kra.todo.core.presentation.ui.shared_composable.Footer
+import ch.kra.todo.core.presentation.ui.shared_composable.Header
+import ch.kra.todo.core.presentation.ui.shared_composable.LoadingWrapper
+import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
 import ch.kra.todo.core.presentation.ui.theme.TextInfoColor
 import ch.kra.todo.todo.domain.model.Todo
 import ch.kra.todo.todo.presentation.todos.TodoListEvent
