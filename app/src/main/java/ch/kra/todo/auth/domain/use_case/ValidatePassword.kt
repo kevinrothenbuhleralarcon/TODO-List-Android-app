@@ -1,5 +1,7 @@
 package ch.kra.todo.auth.domain.use_case
 
+import ch.kra.todo.R
+import ch.kra.todo.core.UIText
 import ch.kra.todo.core.ValidationResult
 
 class ValidatePassword {
@@ -7,7 +9,7 @@ class ValidatePassword {
         if (password.isEmpty()) {
             return ValidationResult(
                 sucessful = false,
-                errorMessage = "Password cannot be empty"
+                errorMessage = UIText.StringResource(R.string.password_error)
             )
         }
         return ValidationResult(

@@ -3,8 +3,11 @@ package ch.kra.todo.todo.data.repository
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import ch.kra.todo.R
 import ch.kra.todo.core.Constants.INVALID_TOKEN
 import ch.kra.todo.core.Resource
+import ch.kra.todo.core.UIEvent
+import ch.kra.todo.core.UIText
 import ch.kra.todo.todo.data.remote.TodoApi
 import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
 import ch.kra.todo.todo.domain.model.Todo
@@ -34,7 +37,7 @@ class TodoRepositoryImpl(
             }
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = e.message ?: "Could not reach server, check your internet connection."
+                message = ""
             ))
         }
     }
@@ -55,7 +58,7 @@ class TodoRepositoryImpl(
             }
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = e.message ?: "Could not reach server, check your internet connection."
+                message = ""
             ))
         }
     }
@@ -64,12 +67,10 @@ class TodoRepositoryImpl(
         emit(Resource.Loading())
         try {
             val response = todoApi.addTodo(token, request)
-            if (response.isSuccessful) {
-                emit(Resource.Success(data = response.body() ?: "Ok"))
-            } else if (response.code() == 401) {
-                emit(Resource.Error(message = INVALID_TOKEN))
-            } else {
-                emit(Resource.Error(message = response.body() ?: "Error"))
+            when {
+                response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
+                response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
+                else -> emit(Resource.Error(message = response.body() ?: ""))
             }
         } catch (e: HttpException) {
             emit(Resource.Error(
@@ -77,7 +78,7 @@ class TodoRepositoryImpl(
             ))
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = e.message ?: "Could not reach server, check your internet connection."
+                message = ""
             ))
         }
     }
@@ -86,12 +87,10 @@ class TodoRepositoryImpl(
         emit(Resource.Loading())
         try {
             val response = todoApi.updateTodo(token, request)
-            if (response.isSuccessful) {
-                emit(Resource.Success(data = response.body() ?: "Ok"))
-            } else if (response.code() == 401) {
-                emit(Resource.Error(message = INVALID_TOKEN))
-            } else {
-                emit(Resource.Error(message = response.body() ?: "Error"))
+            when {
+                response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
+                response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
+                else -> emit(Resource.Error(message = response.body() ?: ""))
             }
         } catch (e: HttpException) {
             emit(Resource.Error(
@@ -99,7 +98,7 @@ class TodoRepositoryImpl(
             ))
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = e.message ?: "Could not reach server, check your internet connection."
+                message = ""
             ))
         }
     }
@@ -108,12 +107,10 @@ class TodoRepositoryImpl(
         emit(Resource.Loading())
         try {
             val response = todoApi.deleteTodo(token, todoId)
-            if (response.isSuccessful) {
-                emit(Resource.Success(data = response.body() ?: "Ok"))
-            } else if (response.code() == 401) {
-                emit(Resource.Error(message = INVALID_TOKEN))
-            } else {
-                emit(Resource.Error(message = response.body() ?: "Error"))
+            when {
+                response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
+                response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
+                else -> emit(Resource.Error(message = response.body() ?: ""))
             }
         } catch (e: HttpException) {
             emit(Resource.Error(
@@ -121,7 +118,7 @@ class TodoRepositoryImpl(
             ))
         } catch (e: IOException) {
             emit(Resource.Error(
-                message = e.message ?: "Could not reach server, check your internet connection."
+                message = ""
             ))
         }
     }

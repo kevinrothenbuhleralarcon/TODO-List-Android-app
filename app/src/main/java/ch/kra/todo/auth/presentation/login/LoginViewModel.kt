@@ -4,12 +4,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.todo.R
 import ch.kra.todo.auth.domain.use_case.Login
 import ch.kra.todo.auth.domain.use_case.ValidatePassword
 import ch.kra.todo.auth.domain.use_case.ValidateUsername
 import ch.kra.todo.core.Resource
 import ch.kra.todo.core.Routes
 import ch.kra.todo.core.UIEvent
+import ch.kra.todo.core.UIText
 import ch.kra.todo.core.data.local.SettingsDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,13 +26,13 @@ class LoginViewModel @Inject constructor(
     private val settingsDataStore: SettingsDataStore,
     private val validateUsername: ValidateUsername,
     private val validatePassword: ValidatePassword
-): ViewModel() {
+) : ViewModel() {
 
     private val _loginFormState = mutableStateOf(LoginFormState())
     val loginFormState: State<LoginFormState> = _loginFormState
 
-    private val _apiError = mutableStateOf("")
-    val apiError: State<String> = _apiError
+    private val _apiError = mutableStateOf<UIText>(UIText.DynamicString(""))
+    val apiError: State<UIText> = _apiError
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -64,8 +66,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-
 
     private fun sendUIEvent(event: UIEvent) {
         viewModelScope.launch {
@@ -103,16 +103,22 @@ class LoginViewModel @Inject constructor(
                     when (result) {
                         is Resource.Success -> {
                             // Store the token and username in the dataStore
-                            settingsDataStore.saveTokenToPreferenceStore(result.data?.token ?: "")
-                            settingsDataStore.saveConnectedUserToPreferenceStore(result.data?.username ?: "")
+                            settingsDataStore.saveTokenToPreferenceStore(result.data.token)
+                            settingsDataStore.saveConnectedUserToPreferenceStore(result.data.username)
 
-                            sendUIEvent(UIEvent.Navigate(
-                                Routes.TODO_LIST
-                            ))
+                            sendUIEvent(
+                                UIEvent.Navigate(
+                                    Routes.TODO_LIST
+                                )
+                            )
                         }
 
                         is Resource.Error -> {
-                            _apiError.value = result.message ?: "An error occurred"
+                            if (result.message.isNotEmpty()) {
+                                _apiError.value = UIText.DynamicString(result.message)
+                            } else {
+                                _apiError.value = UIText.StringResource(R.string.io_error)
+                            }
                         }
 
                         is Resource.Loading -> {

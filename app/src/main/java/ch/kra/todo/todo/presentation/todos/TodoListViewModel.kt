@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.todo.R
 import ch.kra.todo.core.*
 import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.domain.use_case.GetTodoList
@@ -77,7 +78,7 @@ class TodoListViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         _todoListState.value = todoListState.value.copy(
-                            todoList = result.data ?: emptyList(),
+                            todoList = result.data,
                             isLoading = false
                         )
                     }
@@ -93,7 +94,8 @@ class TodoListViewModel @Inject constructor(
                             ))
                         } else {
                             sendUIEvent(UIEvent.ShowSnackbar(
-                                result.message ?: "Unknown error"
+                                if (result.message.isNotEmpty()) UIText.DynamicString(result.message)
+                                else UIText.StringResource(R.string.io_error)
                             ))
                         }
                     }

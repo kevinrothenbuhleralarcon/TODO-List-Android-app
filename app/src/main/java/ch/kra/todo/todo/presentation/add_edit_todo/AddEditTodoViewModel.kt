@@ -7,11 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.todo.R
+import ch.kra.todo.core.*
 import ch.kra.todo.core.Constants.INVALID_TOKEN
-import ch.kra.todo.core.DateFormatUtil
-import ch.kra.todo.core.Resource
-import ch.kra.todo.core.Routes
-import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.data.remote.dto.TaskDTO
 import ch.kra.todo.todo.data.remote.dto.TodoDTO
@@ -46,8 +44,8 @@ class AddEditTodoViewModel @Inject constructor(
     private val _todoFormState = mutableStateOf(TodoFormState())
     val todoFormState: State<TodoFormState> = _todoFormState
 
-    private val _apiError = mutableStateOf("")
-    val apiError: State<String> = _apiError
+    private val _apiError = mutableStateOf<UIText>(UIText.DynamicString(""))
+    val apiError: State<UIText> = _apiError
 
     private var _currentTodoId: Int? = null
     val currentTodoId get() = _currentTodoId
@@ -127,22 +125,20 @@ class AddEditTodoViewModel @Inject constructor(
                 .onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            result.data?.let {
-                                _currentTodoId = it.id
-                                _todoFormState.value = _todoFormState.value.copy(
-                                    title = it.title,
-                                    createdAt = it.createdAt,
-                                    tasks = it.tasks?.map { task ->
-                                        TaskFormState(
-                                            id = task.id,
-                                            description = task.description,
-                                            status = task.status,
-                                            deadline = task.deadline
-                                        )
-                                    } ?: emptyList(),
-                                    isLoading = false
-                                )
-                            }
+                            _currentTodoId = result.data.id
+                            _todoFormState.value = _todoFormState.value.copy(
+                                title = result.data.title,
+                                createdAt = result.data.createdAt,
+                                tasks = result.data.tasks?.map { task ->
+                                    TaskFormState(
+                                        id = task.id,
+                                        description = task.description,
+                                        status = task.status,
+                                        deadline = task.deadline
+                                    )
+                                } ?: emptyList(),
+                                isLoading = false
+                            )
                         }
 
                         is Resource.Error -> {
@@ -158,7 +154,11 @@ class AddEditTodoViewModel @Inject constructor(
                             } else {
                                 sendUIEvent(
                                     UIEvent.ShowSnackbar(
-                                        message = result.message ?: "Unknown error"
+                                        message = if (result.message.isNotEmpty()) {
+                                            UIText.DynamicString(result.message)
+                                        } else {
+                                            UIText.StringResource(R.string.error)
+                                        }
                                     )
                                 )
                             }
@@ -185,7 +185,8 @@ class AddEditTodoViewModel @Inject constructor(
         )
         val titleResult = validateTodoTitle(_todoFormState.value.title)
         val taskEmpty = validateTaskEmpty(_todoFormState.value.tasks)
-        val tasksDetailResult = _todoFormState.value.tasks.map { validateTaskDescription(it.description) }
+        val tasksDetailResult =
+            _todoFormState.value.tasks.map { validateTaskDescription(it.description) }
 
         val hasError = listOf(
             titleResult,
@@ -246,7 +247,11 @@ class AddEditTodoViewModel @Inject constructor(
                                     )
                                 )
                             } else {
-                                _apiError.value = result.message ?: "An error occurred"
+                                if (result.message.isNotEmpty()) {
+                                    _apiError.value = UIText.DynamicString(result.message)
+                                } else {
+                                    _apiError.value = UIText.StringResource(R.string.io_error)
+                                }
                             }
                         }
 
@@ -296,7 +301,11 @@ class AddEditTodoViewModel @Inject constructor(
                                     )
                                 )
                             } else {
-                                _apiError.value = result.message ?: "An error occurred"
+                                if (result.message.isNotEmpty()) {
+                                    _apiError.value = UIText.DynamicString(result.message)
+                                } else {
+                                    _apiError.value = UIText.StringResource(R.string.io_error)
+                                }
                             }
                         }
 
@@ -331,7 +340,11 @@ class AddEditTodoViewModel @Inject constructor(
                                         )
                                     )
                                 } else {
-                                    _apiError.value = result.message ?: "An error occurred"
+                                    if (result.message.isNotEmpty()) {
+                                        _apiError.value = UIText.DynamicString(result.message)
+                                    } else {
+                                        _apiError.value = UIText.StringResource(R.string.io_error)
+                                    }
                                 }
                             }
 

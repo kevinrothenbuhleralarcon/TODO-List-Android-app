@@ -24,4 +24,11 @@
     <string name="delete_dialog_text">Are you sure you want to delete this Todo?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="io_error">Could not reach server, check your internet connection.</string>
+    <string name="error">Unknown error</string>
+    <string name="description_error">The description cannot be blank</string>
+    <string name="empty_tasks_error">At lease one task is needed</string>
+    <string name="todo_title_error">The title cannot be blank</string>
+    <string name="password_error">Password cannot be empty</string>
+    <string name="username_error">Username cannot be empty</string>
 </resources>

@@ -1,5 +1,7 @@
 package ch.kra.todo.todo.domain.use_case
 
+import ch.kra.todo.R
+import ch.kra.todo.core.UIText
 import ch.kra.todo.core.ValidationResult
 
 class ValidateTodoTitle {
@@ -8,7 +10,7 @@ class ValidateTodoTitle {
         if (title.isBlank()) {
             return ValidationResult(
                 sucessful = false,
-                errorMessage = "The title cannot be blank"
+                errorMessage = UIText.StringResource(R.string.todo_title_error)
             )
         }
         return ValidationResult(

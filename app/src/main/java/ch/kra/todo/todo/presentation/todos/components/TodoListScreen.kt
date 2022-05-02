@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +42,8 @@ fun TodoListScreen(
     val username = viewModel.username.value
     val todoListState = viewModel.todoListState.value
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.getTodoList()
         viewModel.uiEvent.collect { event ->
@@ -51,9 +54,10 @@ fun TodoListScreen(
 
                 is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
+                        message = event.message.asString(context)
                     )
                 }
+                else -> {}
             }
         }
     }

@@ -1,9 +1,11 @@
 package ch.kra.todo.auth.presentation.login
 
+import ch.kra.todo.core.UIText
+
 data class LoginFormState(
     val username: String = "",
-    val usernameError: String? = null,
+    val usernameError: UIText? = null,
     val password: String = "",
-    val passwordError: String? = null,
+    val passwordError: UIText? = null,
     val passwordVisibility: Boolean = false
 )

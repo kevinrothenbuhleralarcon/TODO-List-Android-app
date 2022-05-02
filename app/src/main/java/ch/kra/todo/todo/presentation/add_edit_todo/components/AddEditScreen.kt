@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +46,8 @@ fun AddEditScreen(
     val currentTodoId = viewModel.currentTodoId
     val todoState = viewModel.todoFormState.value
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -58,7 +61,7 @@ fun AddEditScreen(
 
                 is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
+                        message = event.message.asString(context)
                     )
                 }
 
@@ -133,9 +136,9 @@ private fun TodoDetail(
                 .fillMaxSize()
         ) {
 
-            if(apiError.isNotEmpty()) {
+            if(apiError.asString().isNotEmpty()) {
                 Text(
-                    text = apiError,
+                    text = apiError.asString(),
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.error,
                     modifier = Modifier
@@ -152,14 +155,14 @@ private fun TodoDetail(
             )
             if (todoState.titleError != null) {
                 Text(
-                    text = todoState.titleError,
+                    text = todoState.titleError.asString(),
                     color = MaterialTheme.colors.error
                 )
             }
 
             if(todoState.tasksEmptyError != null) {
                 Text(
-                    text = todoState.tasksEmptyError,
+                    text = todoState.tasksEmptyError.asString(),
                     color = MaterialTheme.colors.error
                 )
             }
@@ -225,7 +228,7 @@ private fun TodoDetail(
                             )
                             if (todoState.tasks[taskId].descriptionError != null) {
                                 Text(
-                                    text = todoState.tasks[taskId].descriptionError!!,
+                                    text = todoState.tasks[taskId].descriptionError!!.asString(),
                                     color = MaterialTheme.colors.error
                                 )
                             }

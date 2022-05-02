@@ -1,5 +1,7 @@
 package ch.kra.todo.todo.domain.use_case
 
+import ch.kra.todo.R
+import ch.kra.todo.core.UIText
 import ch.kra.todo.core.ValidationResult
 
 class ValidateTaskDescription {
@@ -8,7 +10,7 @@ class ValidateTaskDescription {
         if (description.isBlank()) {
             return ValidationResult(
                 sucessful = false,
-                errorMessage = "The description cannot be blank"
+                errorMessage = UIText.StringResource(R.string.description_error)
             )
         }
         return ValidationResult(

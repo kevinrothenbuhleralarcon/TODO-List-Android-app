@@ -120,7 +120,7 @@ private fun LoginForm(
             modifier= Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp),
-            text = error,
+            text = error.asString(),
             fontSize = 16.sp,
             fontWeight = Bold,
             color = TextErrorColor
@@ -139,7 +139,7 @@ private fun LoginForm(
 
         if (loginFormState.usernameError != null) {
             Text(
-                text = loginFormState.usernameError,
+                text = loginFormState.usernameError.asString(),
                 color = MaterialTheme.colors.error
             )
         }
@@ -173,7 +173,7 @@ private fun LoginForm(
 
         if (loginFormState.passwordError != null) {
             Text(
-                text = loginFormState.passwordError,
+                text = loginFormState.passwordError.asString(),
                 color = MaterialTheme.colors.error
             )
         }
