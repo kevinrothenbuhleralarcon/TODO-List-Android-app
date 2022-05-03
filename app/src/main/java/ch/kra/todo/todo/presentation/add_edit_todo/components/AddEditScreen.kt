@@ -92,17 +92,15 @@ fun AddEditScreen(
                 modifier = Modifier
                     .height(46.dp)
                     .fillMaxWidth(),
-                username = username
-            )
-            Text(
-                modifier = Modifier
-                    .padding(20.dp),
-                text = todoState.title.ifEmpty { stringResource(R.string.new_todo) },
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                username = username,
+                title = todoState.title.ifEmpty { stringResource(R.string.new_todo) },
+                hasBackArrow = true,
+                navigateBack = { viewModel.onEvent(AddEditTodoEvent.NavigateBack) }
             )
             LoadingWrapper(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .fillMaxSize(),
                 isLoading = todoState.isLoading
             ) {
                 TodoDetail(
