@@ -1,13 +1,11 @@
 package ch.kra.todo.auth.data.repository
 
-import android.util.Log
-import ch.kra.todo.R
 import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.auth.data.remote.dto.requests.LoginRequestDTO
+import ch.kra.todo.auth.data.remote.dto.requests.RegisterRequestDTO
 import ch.kra.todo.auth.data.remote.dto.responses.LoginResponseDTO
 import ch.kra.todo.auth.domain.repository.AuthRepository
 import ch.kra.todo.core.Resource
-import ch.kra.todo.core.UIText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -30,7 +28,29 @@ class AuthRepositoryImpl(
                 message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
             ))
         } catch (e: IOException) {
-            Log.d("Https","Error: ${e.message}")
+            emit(Resource.Error(
+                message = ""
+            ))
+        }
+    }
+
+    override fun register(
+        username: String,
+        email: String,
+        password: String
+    ): Flow<Resource<LoginResponseDTO>> = flow {
+        emit(Resource.Loading())
+        try {
+            val registerRequest = RegisterRequestDTO(username, email, password)
+            val loginResponse = authApi.register(registerRequest)
+            emit(Resource.Success(
+                data = loginResponse
+            ))
+        } catch (e: HttpException) {
+            emit(Resource.Error(
+                message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
+            ))
+        } catch (e: IOException) {
             emit(Resource.Error(
                 message = ""
             ))

@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     fun login(username: String, password: String): Flow<Resource<LoginResponseDTO>>
+    fun register(username: String, email: String, password: String): Flow<Resource<LoginResponseDTO>>
 }
