@@ -134,7 +134,7 @@ private fun TodoDetail(
                 .fillMaxSize()
         ) {
 
-            if(apiError.asString().isNotEmpty()) {
+            if (apiError.asString().isNotEmpty()) {
                 Text(
                     text = apiError.asString(),
                     fontSize = 16.sp,
@@ -158,7 +158,7 @@ private fun TodoDetail(
                 )
             }
 
-            if(todoState.tasksEmptyError != null) {
+            if (todoState.tasksEmptyError != null) {
                 Text(
                     text = todoState.tasksEmptyError.asString(),
                     color = MaterialTheme.colors.error
@@ -237,7 +237,11 @@ private fun TodoDetail(
                                     .fillMaxWidth()
                             ) {
                                 DatePicker(
-                                    date = todoState.tasks[taskId].deadline?.let { DateFormatUtil.formatStringDateFromLocalDateTime(it) },
+                                    date = todoState.tasks[taskId].deadline?.let {
+                                        DateFormatUtil.formatStringDateFromLocalDateTime(
+                                            it
+                                        )
+                                    },
                                     onUpdateDate = {
                                         it?.let {
                                             onEvent(AddEditTodoEvent.DeadlineChanged(taskId, it))
@@ -247,16 +251,18 @@ private fun TodoDetail(
                             }
                         }
 
-                        FloatingActionButton(
-                            onClick = { onEvent(AddEditTodoEvent.RemoveTask(taskId)) },
-                            backgroundColor = MaterialTheme.colors.primary,
-                            modifier = Modifier.size(25.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_remove),
-                                contentDescription = stringResource(R.string.remove_task),
-                                tint = Color.White
-                            )
+                        if (todoState.tasks.size > 1) {
+                            FloatingActionButton(
+                                onClick = { onEvent(AddEditTodoEvent.RemoveTask(taskId)) },
+                                backgroundColor = MaterialTheme.colors.primary,
+                                modifier = Modifier.size(25.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_remove),
+                                    contentDescription = stringResource(R.string.remove_task),
+                                    tint = Color.White
+                                )
+                            }
                         }
                     }
                 }
@@ -316,10 +322,10 @@ private fun TodoDetail(
                             fontSize = 18.sp,
                         )
                     }
-                    
+
                     if (openDialog) {
                         AlertDialog(
-                            onDismissRequest = {  },
+                            onDismissRequest = { },
                             title = { Text(text = stringResource(R.string.confirmation)) },
                             text = { Text(text = stringResource(R.string.delete_dialog_text)) },
                             confirmButton = {
