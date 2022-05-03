@@ -39,25 +39,25 @@ class LoginViewModel @Inject constructor(
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onEvent(event: AuthListEvent) {
+    fun onEvent(event: LoginListEvent) {
         when (event) {
-            is AuthListEvent.EnteredUsername -> {
+            is LoginListEvent.EnteredUsername -> {
                 _loginFormState.value = loginFormState.value.copy(
                     username = event.value
                 )
             }
 
-            is AuthListEvent.EnteredPassword -> {
+            is LoginListEvent.EnteredPassword -> {
                 _loginFormState.value = loginFormState.value.copy(
                     password = event.value
                 )
             }
 
-            is AuthListEvent.Login -> {
+            is LoginListEvent.Login -> {
                 submitData()
             }
 
-            is AuthListEvent.OnNavigateToWebClient -> {
+            is LoginListEvent.OnNavigateToWebClient -> {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(event.url)
@@ -65,7 +65,7 @@ class LoginViewModel @Inject constructor(
                 sendUIEvent(UIEvent.StartIntent(intent))
             }
 
-            is AuthListEvent.TogglePasswordVisibility -> {
+            is LoginListEvent.TogglePasswordVisibility -> {
                 _loginFormState.value = loginFormState.value.copy(
                     passwordVisibility = !loginFormState.value.passwordVisibility
                 )

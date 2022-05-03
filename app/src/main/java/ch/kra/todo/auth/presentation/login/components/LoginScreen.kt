@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
-import ch.kra.todo.auth.presentation.login.AuthListEvent
+import ch.kra.todo.auth.presentation.login.LoginListEvent
 import ch.kra.todo.auth.presentation.login.LoginViewModel
 import ch.kra.todo.core.Constants.BASE_URL
 import ch.kra.todo.core.UIEvent
@@ -144,7 +144,7 @@ private fun LoginForm(
                 .fillMaxWidth(),
             value = loginFormState.username,
             onValueChange = {
-                viewModel.onEvent(AuthListEvent.EnteredUsername(it))
+                viewModel.onEvent(LoginListEvent.EnteredUsername(it))
             },
             label = { Text(text = stringResource(R.string.username)) },
             singleLine = true,
@@ -163,7 +163,7 @@ private fun LoginForm(
                 .fillMaxWidth(),
             value = loginFormState.password,
             onValueChange = {
-                viewModel.onEvent(AuthListEvent.EnteredPassword(it))
+                viewModel.onEvent(LoginListEvent.EnteredPassword(it))
             },
             label = { Text(text = stringResource(R.string.password)) },
             singleLine = true,
@@ -175,7 +175,7 @@ private fun LoginForm(
                 val description = if (loginFormState.passwordVisibility)
                     stringResource(R.string.hide_password)
                 else stringResource(R.string.show_password)
-                IconButton(onClick = { viewModel.onEvent(AuthListEvent.TogglePasswordVisibility) }) {
+                IconButton(onClick = { viewModel.onEvent(LoginListEvent.TogglePasswordVisibility) }) {
                     Icon(
                         imageVector = image,
                         contentDescription = description
@@ -193,7 +193,7 @@ private fun LoginForm(
         }
 
         Button(
-            onClick = { viewModel.onEvent(AuthListEvent.Login) },
+            onClick = { viewModel.onEvent(LoginListEvent.Login) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
@@ -232,7 +232,7 @@ private fun LoginForm(
                 annotatedLinkString
                     .getStringAnnotations("URL", it, it)
                     .firstOrNull()?.let { stringAnnotation ->
-                        viewModel.onEvent(AuthListEvent.OnNavigateToWebClient(stringAnnotation.item))
+                        viewModel.onEvent(LoginListEvent.OnNavigateToWebClient(stringAnnotation.item))
                     }
             }
         )
