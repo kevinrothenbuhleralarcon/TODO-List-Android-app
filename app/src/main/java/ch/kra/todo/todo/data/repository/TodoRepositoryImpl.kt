@@ -25,7 +25,7 @@ class TodoRepositoryImpl(
     override fun getTodoList(token: String): Flow<Resource<List<Todo>>> = flow {
         emit(Resource.Loading())
         try {
-            val todoList = todoApi.getTodoList(token).todos.map { it.toTodo() }
+            val todoList = todoApi.getTodoList(token).todos?.let { it.map { todo -> todo.toTodo() } } ?: emptyList()
             emit(Resource.Success(data = todoList))
         } catch (e: HttpException) {
             if (e.response()?.code() == 401) {
