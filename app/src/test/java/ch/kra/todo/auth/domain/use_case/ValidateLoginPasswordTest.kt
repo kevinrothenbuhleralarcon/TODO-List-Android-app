@@ -4,23 +4,23 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class ValidatePasswordTest {
-    private lateinit var validatePassword: ValidatePassword
+class ValidateLoginPasswordTest {
+    private lateinit var validateLoginPassword: ValidateLoginPassword
 
     @Before
     fun setUp() {
-        validatePassword = ValidatePassword()
+        validateLoginPassword = ValidateLoginPassword()
     }
 
     @Test
     fun `Password is empty, return error`() {
-        val result = validatePassword("")
+        val result = validateLoginPassword("")
         assertEquals(result.successful, false)
     }
 
     @Test
     fun `Password is not empty, return success`() {
-        val result = validatePassword("Test")
+        val result = validateLoginPassword("Test")
         assertEquals(result.successful, true)
     }
 }

@@ -4,7 +4,7 @@ import ch.kra.todo.R
 import ch.kra.todo.core.UIText
 import ch.kra.todo.core.ValidationResult
 
-class ValidatePassword {
+class ValidateLoginPassword {
     operator fun invoke(password: String): ValidationResult {
         if (password.isEmpty()) {
             return ValidationResult(

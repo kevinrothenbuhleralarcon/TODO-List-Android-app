@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.todo.R
 import ch.kra.todo.auth.domain.use_case.Login
-import ch.kra.todo.auth.domain.use_case.ValidatePassword
+import ch.kra.todo.auth.domain.use_case.ValidateLoginPassword
 import ch.kra.todo.auth.domain.use_case.ValidateUsername
 import ch.kra.todo.core.Resource
 import ch.kra.todo.core.Routes
@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
     private val login: Login,
     private val settingsDataStore: SettingsDataStore,
     private val validateUsername: ValidateUsername,
-    private val validatePassword: ValidatePassword
+    private val validateLoginPassword: ValidateLoginPassword
 ) : ViewModel() {
 
     private val _loginFormState = mutableStateOf(LoginFormState())
@@ -85,7 +85,7 @@ class LoginViewModel @Inject constructor(
             passwordError = null
         )
         val usernameResult = validateUsername(loginFormState.value.username)
-        val passwordResult = validatePassword(loginFormState.value.password)
+        val passwordResult = validateLoginPassword(loginFormState.value.password)
 
         val hasError = listOf(
             usernameResult,

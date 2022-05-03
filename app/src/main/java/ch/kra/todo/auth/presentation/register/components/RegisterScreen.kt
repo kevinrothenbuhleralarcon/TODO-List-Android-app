@@ -11,5 +11,5 @@ fun RegisterScreen(
      navigate: (UIEvent.Navigate) -> Unit,
      popBackStack: () -> Unit
 ) {
-
+     
 }

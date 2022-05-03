@@ -33,4 +33,7 @@
     <string name="username_error">Username cannot be empty</string>
     <string name="author">Author: Kevin Rothenbühler-Alarcon</string>
     <string name="back">Back</string>
+    <string name="password_mismatch_error">The passwords does not match</string>
+    <string name="email_empty_error">The email cannot be empty</string>
+    <string name="email_validity_error">The email is not valid</string>
 </resources>
