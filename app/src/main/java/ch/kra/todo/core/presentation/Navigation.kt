@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ch.kra.todo.auth.presentation.login.components.LoginScreen
+import ch.kra.todo.auth.presentation.register.components.RegisterScreen
 import ch.kra.todo.core.Routes
 import ch.kra.todo.todo.presentation.add_edit_todo.components.AddEditScreen
 import ch.kra.todo.todo.presentation.todos.components.TodoListScreen
@@ -26,6 +27,19 @@ fun Navigation(navController: NavHostController) {
                     navController.navigate(event.route) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                navigate = { event ->
+                    navController.navigate(event.route) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                },
+                popBackStack =  {
+                    navController.popBackStack()
                 }
             )
         }
