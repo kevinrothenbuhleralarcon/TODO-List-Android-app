@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.auth.presentation.login.AuthListEvent
 import ch.kra.todo.auth.presentation.login.LoginViewModel
+import ch.kra.todo.core.Constants.BASE_URL
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
 import ch.kra.todo.core.presentation.ui.shared_composable.Footer
@@ -61,7 +62,7 @@ fun LoginScreen(
                     )
                 }
                 is UIEvent.PopBackStack -> {}
-                is UIEvent.StartIntent -> {}
+                is UIEvent.StartIntent -> { context.startActivity(event.intent) }
             }
         }
     }
@@ -216,7 +217,7 @@ private fun LoginForm(
             )
             addStringAnnotation(
                 tag = "URL",
-                annotation = "url",
+                annotation = BASE_URL + "register",
                 start = startIndex,
                 end = endIndex
             )

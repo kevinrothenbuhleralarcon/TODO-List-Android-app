@@ -1,5 +1,7 @@
 package ch.kra.todo.auth.presentation.login
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -56,7 +58,11 @@ class LoginViewModel @Inject constructor(
             }
 
             is AuthListEvent.OnNavigateToWebClient -> {
-
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(event.url)
+                )
+                sendUIEvent(UIEvent.StartIntent(intent))
             }
 
             is AuthListEvent.TogglePasswordVisibility -> {
