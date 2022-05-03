@@ -2,8 +2,10 @@
     <string name="app_name">Todo</string>
     <string name="welcome">Welcome to Todo list</string>
     <string name="login_header">Please sign in</string>
+    <string name="register_header">Account creation</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="password_2">Retype password</string>
     <string name="hide_password">Hide password</string>
     <string name="show_password">Show password</string>
     <string name="submit">Submit</string>
@@ -36,4 +38,12 @@
     <string name="password_mismatch_error">The passwords does not match</string>
     <string name="email_empty_error">The email cannot be empty</string>
     <string name="email_validity_error">The email is not valid</string>
+    <string name="email">Email</string>
+    <string name="password_requirement">
+        Password must at least contain:\n
+        - 8 characters\n
+        - 1 number\n
+        - 1 capital letter\n
+        - 1 special character
+    </string>
 </resources>

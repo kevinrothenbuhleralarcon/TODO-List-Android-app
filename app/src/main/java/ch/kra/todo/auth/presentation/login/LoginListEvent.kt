@@ -5,5 +5,5 @@ sealed class LoginListEvent {
     data class EnteredPassword(val value: String): LoginListEvent()
     object TogglePasswordVisibility: LoginListEvent()
     object Login: LoginListEvent()
-    data class OnNavigateToWebClient(val url: String): LoginListEvent()
+    object Register: LoginListEvent()
 }

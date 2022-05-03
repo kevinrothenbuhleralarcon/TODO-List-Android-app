@@ -24,9 +24,14 @@ fun Navigation(navController: NavHostController) {
         composable(Routes.LOGIN) {
             LoginScreen(
                 navigate = { event ->
-                    navController.navigate(event.route) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    if (event.route == Routes.TODO_LIST) {
+                        navController.navigate(event.route) {
+                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(event.route)
                     }
+
                 }
             )
         }

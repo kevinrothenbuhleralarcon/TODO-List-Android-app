@@ -1,9 +1,13 @@
 package ch.kra.todo.auth.presentation.login.components
 
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -62,7 +67,6 @@ fun LoginScreen(
                     )
                 }
                 is UIEvent.PopBackStack -> {}
-                is UIEvent.StartIntent -> { context.startActivity(event.intent) }
             }
         }
     }
@@ -99,12 +103,13 @@ fun LoginScreen(
             )
             LoadingWrapper(
                 isLoading = loginFormState.isLoading,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
                 TodoCard {
                     LoginForm(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
                     )
                 }
             }
@@ -130,15 +135,17 @@ private fun LoginForm(
             fontSize = 24.sp,
             fontWeight = Bold
         )
-        Text(
-            modifier= Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            text = error.asString(),
-            fontSize = 16.sp,
-            fontWeight = Bold,
-            color = TextErrorColor
-        )
+        if (error.asString().isNotEmpty()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                text = error.asString(),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextErrorColor
+            )
+        }
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -215,12 +222,6 @@ private fun LoginForm(
                     textDecoration = TextDecoration.Underline,
                 ), start = startIndex, end = endIndex
             )
-            addStringAnnotation(
-                tag = "URL",
-                annotation = BASE_URL + "register",
-                start = startIndex,
-                end = endIndex
-            )
         }
         ClickableText(
             modifier = Modifier.fillMaxWidth(),
@@ -229,11 +230,7 @@ private fun LoginForm(
                 textAlign = TextAlign.Center
             ),
             onClick = {
-                annotatedLinkString
-                    .getStringAnnotations("URL", it, it)
-                    .firstOrNull()?.let { stringAnnotation ->
-                        viewModel.onEvent(LoginListEvent.OnNavigateToWebClient(stringAnnotation.item))
-                    }
+                viewModel.onEvent(LoginListEvent.Register)
             }
         )
     }
