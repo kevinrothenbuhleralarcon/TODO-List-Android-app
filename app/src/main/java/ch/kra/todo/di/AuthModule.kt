@@ -4,6 +4,7 @@ import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.auth.data.repository.AuthRepositoryImpl
 import ch.kra.todo.auth.domain.repository.AuthRepository
 import ch.kra.todo.auth.domain.use_case.Login
+import ch.kra.todo.auth.domain.use_case.Register
 import ch.kra.todo.auth.domain.use_case.ValidatePassword
 import ch.kra.todo.auth.domain.use_case.ValidateUsername
 import ch.kra.todo.core.Constants
@@ -41,6 +42,12 @@ object AuthModule {
     @Singleton
     fun provideLogin(repository: AuthRepository): Login {
         return Login(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRegister(repository: AuthRepository): Register {
+        return Register(repository)
     }
 
     @Provides
