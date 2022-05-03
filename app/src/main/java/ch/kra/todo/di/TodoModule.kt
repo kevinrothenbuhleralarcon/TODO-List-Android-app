@@ -23,6 +23,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -35,8 +36,9 @@ object TodoModule {
 
     @Provides
     @Singleton
-    fun provideTodoApi(): TodoApi {
+    fun provideTodoApi(okHttpClient: OkHttpClient): TodoApi {
         return Retrofit.Builder()
+            .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)

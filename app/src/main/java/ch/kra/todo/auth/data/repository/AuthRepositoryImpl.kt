@@ -1,5 +1,6 @@
 package ch.kra.todo.auth.data.repository
 
+import android.util.Log
 import ch.kra.todo.R
 import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.auth.data.remote.dto.requests.LoginRequestDTO
@@ -29,6 +30,7 @@ class AuthRepositoryImpl(
                 message = e.response()?.errorBody()?.charStream()?.readText() ?: e.message()
             ))
         } catch (e: IOException) {
+            Log.d("Https","Error: ${e.message}")
             emit(Resource.Error(
                 message = ""
             ))

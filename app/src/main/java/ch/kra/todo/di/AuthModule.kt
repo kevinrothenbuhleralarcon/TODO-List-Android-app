@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -21,8 +22,9 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthApi(): AuthApi {
+    fun provideAuthApi(okHttpClient: OkHttpClient): AuthApi {
         return Retrofit.Builder()
+            .client(okHttpClient)
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
