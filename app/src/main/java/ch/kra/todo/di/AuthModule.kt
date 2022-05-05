@@ -22,7 +22,7 @@ object AuthModule {
     @Singleton
     fun provideAuthApi(okHttpClient: OkHttpClient): AuthApi {
         return Retrofit.Builder()
-            .client(okHttpClient)
+            //.client(okHttpClient)
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

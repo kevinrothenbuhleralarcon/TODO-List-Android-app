@@ -38,7 +38,7 @@ object TodoModule {
     @Singleton
     fun provideTodoApi(okHttpClient: OkHttpClient): TodoApi {
         return Retrofit.Builder()
-            .client(okHttpClient)
+            //.client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
