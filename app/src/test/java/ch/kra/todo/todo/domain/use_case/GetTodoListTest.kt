@@ -36,11 +36,11 @@ class GetTodoListTest {
 
     @Test
     fun `Invalid Token, return Error`() = runBlocking{
-        val token = "notSuccess"
-        val loading = getTodoList(token).first()
+        val results = getTodoList("notSuccess")
+        val loading = results.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val error = getTodoList(token).last()
+        val error = results.last()
         assertEquals("error is not Resource.Error", true, error is Resource.Error)
 
         if (error is Resource.Error) {
@@ -51,11 +51,11 @@ class GetTodoListTest {
 
     @Test
     fun `Valid Token, return Success`() = runBlocking{
-        val token = "success"
-        val loading = getTodoList(token).first()
+        val results = getTodoList("success")
+        val loading = results.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val success = getTodoList(token).last()
+        val success = results.last()
         assertEquals("success is not Resource.Success", true, success is Resource.Success)
 
         if (success is Resource.Success) {

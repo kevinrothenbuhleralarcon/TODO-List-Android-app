@@ -36,12 +36,12 @@ class UpdateTodoTest {
 
     @Test
     fun `Invalid Token, return Error`() = runBlocking{
-        val token = "notSuccess"
         val todoDto = TodoDTO(id = 3, title = "Changed Title 3", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z")
-        val loading = updateTodo(token, AddEditTodoRequestDTO(todoDto)).first()
+        val results = updateTodo("notSuccess", AddEditTodoRequestDTO(todoDto))
+        val loading = results.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val error = updateTodo(token, AddEditTodoRequestDTO(todoDto)).last()
+        val error = results.last()
         assertEquals("error is not Resource.Error", true, error is Resource.Error)
 
         if (error is Resource.Error) {
@@ -52,12 +52,12 @@ class UpdateTodoTest {
 
     @Test
     fun `Todo is not on the list, return Error`() = runBlocking{
-        val token = "success"
         val todoDto = TodoDTO(id = 10, title = "Changed Title 10", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z")
-        val loading = updateTodo(token, AddEditTodoRequestDTO(todoDto)).first()
+        val results = updateTodo("success", AddEditTodoRequestDTO(todoDto))
+        val loading = results.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val error = updateTodo(token, AddEditTodoRequestDTO(todoDto)).last()
+        val error = results.last()
         assertEquals("error is not Resource.Error", true, error is Resource.Error)
 
         if (error is Resource.Error) {
@@ -69,12 +69,12 @@ class UpdateTodoTest {
 
     @Test
     fun `Valid Token, return Success`() = runBlocking{
-        val token = "success"
         val todoDto = TodoDTO(id = 3, title = "Changed Title 3", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z")
-        val loading = updateTodo(token, AddEditTodoRequestDTO(todoDto)).first()
+        val results = updateTodo("success", AddEditTodoRequestDTO(todoDto))
+        val loading = results.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val success = updateTodo(token, AddEditTodoRequestDTO(todoDto)).last()
+        val success = results.last()
         assertEquals("success is not Resource.Success", true, success is Resource.Success)
 
         if (success is Resource.Success) {

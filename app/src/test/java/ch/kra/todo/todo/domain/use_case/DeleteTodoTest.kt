@@ -3,14 +3,12 @@ package ch.kra.todo.todo.domain.use_case
 import ch.kra.todo.core.Constants.INVALID_TOKEN
 import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.core.Resource
-import ch.kra.todo.todo.data.remote.dto.TodoDTO
-import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
 import ch.kra.todo.todo.data.repository.FakeTodoRepository
 import ch.kra.todo.todo.domain.model.Todo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -36,12 +34,11 @@ class DeleteTodoTest {
 
     @Test
     fun `Invalid token, return error`() = runBlocking {
-        val token = "notSuccess"
-        val todoId = 1
-        val loading = deleteTodo(token, todoId).first()
+        val flow = deleteTodo("notSuccess", 1)
+        val loading = flow.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val error = deleteTodo(token, todoId).last()
+        val error = flow.last()
         assertEquals("error is not Resource.Error", true, error is Resource.Error)
 
         if (error is Resource.Error) {
@@ -51,12 +48,11 @@ class DeleteTodoTest {
 
     @Test
     fun `Todo id is not in the list, return error`() = runBlocking() {
-        val token = "success"
-        val todoId = 6
-        val loading = deleteTodo(token, todoId).first()
+        val flow = deleteTodo("success", 6)
+        val loading = flow.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val error = deleteTodo(token, todoId).last()
+        val error = flow.last()
         assertEquals("error is not Resource.Error", true, error is Resource.Error)
 
         if (error is Resource.Error) {
@@ -66,12 +62,11 @@ class DeleteTodoTest {
 
     @Test
     fun `Valid token and id, return Success`() = runBlocking() {
-        val token = "success"
-        val todoId = 3
-        val loading = deleteTodo(token, todoId).first()
+        val flow = deleteTodo("success", 3)
+        val loading = flow.first()
         assertEquals("loading is not Resource.Loading", true, loading is Resource.Loading)
 
-        val success = deleteTodo(token, todoId).last()
+        val success = flow.last()
         assertEquals("success is not Resource.Success", true, success is Resource.Success)
 
         if (success is Resource.Error) {
