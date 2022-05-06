@@ -38,7 +38,8 @@ class FakeTodoApi: TodoApi {
 
     override suspend fun updateTodo(token: String, todo: AddEditTodoRequestDTO): Response<String> {
         if (token == "success") {
-            val index = todoList.indexOf(todo.todo)
+            val previousTodo = todoList.find { it.id == todo.todo.id }
+            val index = todoList.indexOf(previousTodo)
             return if (index != -1) {
                 todoList[index] = todo.todo
                 Response.success("Todo updated")

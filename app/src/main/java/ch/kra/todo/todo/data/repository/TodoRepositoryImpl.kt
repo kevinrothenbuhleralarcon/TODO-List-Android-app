@@ -74,7 +74,9 @@ class TodoRepositoryImpl(
             when {
                 response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
                 response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
-                else -> emit(Resource.Error(message = response.body() ?: ""))
+                else -> {
+                    emit(Resource.Error(message = response.errorBody()?.charStream()?.readText() ?: ""))
+                }
             }
         } catch (e: HttpException) {
             emit(Resource.Error(
@@ -94,7 +96,7 @@ class TodoRepositoryImpl(
             when {
                 response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
                 response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
-                else -> emit(Resource.Error(message = response.body() ?: ""))
+                else -> emit(Resource.Error(message = response.errorBody()?.charStream()?.readText() ?: ""))
             }
         } catch (e: HttpException) {
             emit(Resource.Error(
@@ -114,7 +116,7 @@ class TodoRepositoryImpl(
             when {
                 response.isSuccessful -> emit(Resource.Success(data = response.body() ?: ""))
                 response.code() == 401 -> emit(Resource.Error(message = INVALID_TOKEN))
-                else -> emit(Resource.Error(message = response.body() ?: ""))
+                else -> emit(Resource.Error(message = response.errorBody()?.charStream()?.readText() ?: ""))
             }
         } catch (e: HttpException) {
             emit(Resource.Error(

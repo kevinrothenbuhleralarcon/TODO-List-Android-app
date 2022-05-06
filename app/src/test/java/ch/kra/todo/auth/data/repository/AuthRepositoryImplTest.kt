@@ -39,7 +39,7 @@ class AuthRepositoryImplTest {
         val result = flow.last()
         assertEquals("result is not Resource.Error", true, result is Resource.Error)
         if (result is Resource.Error)
-            assertEquals("result.message is not Invalid Credential", "Invalid Credential", result.message)
+            assertEquals("result.message is not correct", "Invalid Credential", result.message)
     }
 
     @Test
