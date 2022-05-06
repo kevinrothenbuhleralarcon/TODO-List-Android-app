@@ -57,7 +57,7 @@ class AddEditTodoViewModel @Inject constructor(
         loadSettings()
         savedStateHandle.get<Int>("todoId")?.let { todoId ->
             if (todoId != -1) {
-                getTodo(todoId)
+                getTodo(1000)
             }
         }
     }

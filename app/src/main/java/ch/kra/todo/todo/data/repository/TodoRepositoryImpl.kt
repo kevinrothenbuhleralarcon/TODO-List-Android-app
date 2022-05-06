@@ -46,8 +46,12 @@ class TodoRepositoryImpl(
     override fun getTodo(token: String, todoId: Int): Flow<Resource<Todo>> = flow {
         emit(Resource.Loading())
         try {
-            val todo = todoApi.getTodo(token, todoId).todo.toTodo()
-            emit(Resource.Success(data = todo))
+            todoApi.getTodo(token, todoId).todo?.let {
+                emit(Resource.Success(data = it.toTodo()))
+            } ?: emit(Resource.Error(
+                message = ""
+            ))
+
         } catch (e: HttpException) {
             if (e.response()?.code() == 401) {
                 emit(Resource.Error(message = INVALID_TOKEN))
