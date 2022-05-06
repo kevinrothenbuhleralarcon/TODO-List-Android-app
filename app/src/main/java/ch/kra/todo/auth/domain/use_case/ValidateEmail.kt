@@ -1,6 +1,6 @@
 package ch.kra.todo.auth.domain.use_case
 
-import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import ch.kra.todo.R
 import ch.kra.todo.core.UIText
 import ch.kra.todo.core.ValidationResult
@@ -13,7 +13,7 @@ class ValidateEmail {
                 errorMessage = UIText.StringResource(R.string.email_empty_error)
             )
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if(!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
             return ValidationResult(
                 successful = false,
                 errorMessage = UIText.StringResource(R.string.email_validity_error)

@@ -46,4 +46,5 @@
         - 1 capital letter\n
         - 1 special character
     </string>
+    <string name="password_pattern_error">The password is does not have to correct pattern</string>
 </resources>

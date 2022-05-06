@@ -15,12 +15,12 @@ class ValidateLoginPasswordTest {
     @Test
     fun `Password is empty, return error`() {
         val result = validateLoginPassword("")
-        assertEquals(result.successful, false)
+        assertEquals("Result is not error", false, result.successful)
     }
 
     @Test
     fun `Password is not empty, return success`() {
         val result = validateLoginPassword("Test")
-        assertEquals(result.successful, true)
+        assertEquals("Result is not success", true, result.successful)
     }
 }

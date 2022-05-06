@@ -15,18 +15,18 @@ class ValidateEmailTest{
     @Test
     fun `email is empty, return error`() {
         val result = validateEmail("")
-        assertEquals(result.successful, false)
-    }
-
-    /*@Test
-    fun `email has wrong patter, return error`() {
-        val result = validateEmail("kevin")
-        assertEquals(result.successful, false)
+        assertEquals("Result is not error", false, result.successful)
     }
 
     @Test
-    fun `email is not empty, return success`() {
+    fun `email has wrong pattern, return error`() {
+        val result = validateEmail("kevin")
+        assertEquals("Result is not error", false, result.successful)
+    }
+
+    @Test
+    fun `email has correct pattern, return success`() {
         val result = validateEmail("kevin@test.com")
-        assertEquals(result.successful, true)
-    }*/
+        assertEquals("Result is not success", true, result.successful)
+    }
 }
