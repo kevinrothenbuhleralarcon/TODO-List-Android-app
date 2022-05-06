@@ -1,6 +1,5 @@
 package ch.kra.todo.auth.presentation.register
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +11,7 @@ import ch.kra.todo.core.Routes
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.UIText
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val register: Register,
-    private val settingsDataStore: SettingsDataStore,
+    private val settingsDataStoreImpl: SettingsDataStore,
     private val validateUsername: ValidateUsername,
     private val validateEmail: ValidateEmail,
     private val validateRegisterPassword: ValidateRegisterPassword,
@@ -135,8 +135,8 @@ class RegisterViewModel @Inject constructor(
                             isLoading = false
                         )
                         // Store the token and username in the dataStore
-                        settingsDataStore.saveTokenToPreferenceStore(result.data.token)
-                        settingsDataStore.saveConnectedUserToPreferenceStore(result.data.username)
+                        settingsDataStoreImpl.saveTokenToPreferenceStore(result.data.token)
+                        settingsDataStoreImpl.saveConnectedUserToPreferenceStore(result.data.username)
 
                         sendUIEvent(
                             UIEvent.Navigate(Routes.TODO_LIST)

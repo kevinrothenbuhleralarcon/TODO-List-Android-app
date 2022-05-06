@@ -1,8 +1,5 @@
 package ch.kra.todo.auth.presentation.login
 
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -16,6 +13,7 @@ import ch.kra.todo.core.Routes
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.UIText
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -26,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val login: Login,
-    private val settingsDataStore: SettingsDataStore,
+    private val settingsDataStoreImpl: SettingsDataStore,
     private val validateUsername: ValidateUsername,
     private val validateLoginPassword: ValidateLoginPassword
 ) : ViewModel() {
@@ -107,8 +105,8 @@ class LoginViewModel @Inject constructor(
                                 isLoading = false
                             )
                             // Store the token and username in the dataStore
-                            settingsDataStore.saveTokenToPreferenceStore(result.data.token)
-                            settingsDataStore.saveConnectedUserToPreferenceStore(result.data.username)
+                            settingsDataStoreImpl.saveTokenToPreferenceStore(result.data.token)
+                            settingsDataStoreImpl.saveConnectedUserToPreferenceStore(result.data.username)
 
                             sendUIEvent(
                                 UIEvent.Navigate(

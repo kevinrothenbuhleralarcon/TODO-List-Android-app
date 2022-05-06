@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import ch.kra.todo.core.Constants
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,7 +45,7 @@ object SharedModule {
     @Provides
     @Singleton
     fun provideSettingsDataStore(dataStore: DataStore<Preferences>): SettingsDataStore {
-        return SettingsDataStore(dataStore)
+        return SettingsDataStoreImpl(dataStore)
     }
 
     @Provides

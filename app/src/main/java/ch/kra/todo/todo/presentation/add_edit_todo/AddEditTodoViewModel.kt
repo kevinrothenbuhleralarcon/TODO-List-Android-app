@@ -11,6 +11,7 @@ import ch.kra.todo.R
 import ch.kra.todo.core.*
 import ch.kra.todo.core.Constants.INVALID_TOKEN
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import ch.kra.todo.todo.data.remote.dto.TaskDTO
 import ch.kra.todo.todo.data.remote.dto.TodoDTO
 import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
@@ -27,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditTodoViewModel @Inject constructor(
     private val getTodo: GetTodo,
-    private val settingsDataStore: SettingsDataStore,
+    private val settingsDataStoreImpl: SettingsDataStore,
     private val addTodo: AddTodo,
     private val updateTodo: UpdateTodo,
     private val deleteTodo: DeleteTodo,
@@ -57,7 +58,7 @@ class AddEditTodoViewModel @Inject constructor(
         loadSettings()
         savedStateHandle.get<Int>("todoId")?.let { todoId ->
             if (todoId != -1) {
-                getTodo(1000)
+                getTodo(todoId)
             }
         }
     }
@@ -362,7 +363,7 @@ class AddEditTodoViewModel @Inject constructor(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            settingsDataStore.preferenceFlow.collect {
+            settingsDataStoreImpl.preferenceFlow.collect {
                 _token.value = it.token
                 _username.value = it.connectedUser
             }

@@ -1,16 +1,6 @@
 package ch.kra.todo.di
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStoreFile
-import ch.kra.todo.auth.data.remote.AuthApi
 import ch.kra.todo.core.Constants.BASE_URL
-import ch.kra.todo.core.Constants.CONNECTION_PREFERENCE_NAME
-import ch.kra.todo.core.data.local.SettingsDataStore
 import ch.kra.todo.todo.data.remote.TodoApi
 import ch.kra.todo.todo.data.repository.TodoRepositoryImpl
 import ch.kra.todo.todo.domain.repository.TodoRepository
@@ -18,16 +8,11 @@ import ch.kra.todo.todo.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module

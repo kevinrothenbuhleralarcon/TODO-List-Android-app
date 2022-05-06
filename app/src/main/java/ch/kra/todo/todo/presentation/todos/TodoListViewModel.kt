@@ -1,7 +1,6 @@
 package ch.kra.todo.todo.presentation.todos
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import ch.kra.todo.R
 import ch.kra.todo.core.*
 import ch.kra.todo.core.data.local.SettingsDataStore
+import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import ch.kra.todo.todo.domain.use_case.GetTodoList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TodoListViewModel @Inject constructor(
     private val getTodoList: GetTodoList,
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStoreImpl: SettingsDataStore
 ): ViewModel() {
 
     private val _token = mutableStateOf("")
@@ -113,7 +113,7 @@ class TodoListViewModel @Inject constructor(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            settingsDataStore.preferenceFlow.collect {
+            settingsDataStoreImpl.preferenceFlow.collect {
                 _token.value = it.token
                 _username.value = it.connectedUser
             }
