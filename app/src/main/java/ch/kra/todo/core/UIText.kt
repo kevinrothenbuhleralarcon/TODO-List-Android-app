@@ -22,7 +22,9 @@ sealed class UIText {
 
     fun asString(context: Context): String {
         return when (this) {
-            is DynamicString -> value
+            is DynamicString ->  {
+                value
+            }
             is StringResource -> context.getString(resId, *args)
         }
     }

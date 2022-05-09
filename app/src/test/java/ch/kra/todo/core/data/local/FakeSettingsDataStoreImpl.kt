@@ -9,7 +9,7 @@ class FakeSettingsDataStoreImpl() : SettingsDataStore {
     private lateinit var connectedUser: String
 
     override val preferenceFlow: Flow<ConnectionPreferences> = flow {
-        ConnectionPreferences(token, connectedUser)
+        emit(ConnectionPreferences(token, connectedUser))
     }
 
     override suspend fun saveTokenToPreferenceStore(token: String) {

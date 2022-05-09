@@ -96,7 +96,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun sendLoginRequest() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             login(loginFormState.value.username, loginFormState.value.password)
                 .onEach { result ->
                     when (result) {
