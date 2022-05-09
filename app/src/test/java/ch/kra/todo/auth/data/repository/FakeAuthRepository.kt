@@ -26,10 +26,10 @@ class FakeAuthRepository: AuthRepository {
     ): Flow<Resource<LoginResponseDTO>> {
         return flow {
             emit(Resource.Loading())
-            if(username == "success" && email == "success@test.com" && password == "success") {
+            if(username == "success" && email == "success@test.com" && password == "Success1+") {
                 emit(Resource.Success(data = LoginResponseDTO(token = "success", token_lifetime = "12h", username = "success")))
             } else {
-                emit(Resource.Error(message = "Invalid username"))
+                emit(Resource.Error(message = "Username or email already existing"))
             }
         }
     }

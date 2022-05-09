@@ -1,5 +1,6 @@
 package ch.kra.todo.auth.domain.use_case
 
+import app.cash.turbine.test
 import ch.kra.todo.auth.data.repository.FakeAuthRepository
 import ch.kra.todo.core.Resource
 import kotlinx.coroutines.flow.first
@@ -22,19 +23,25 @@ class RegisterTest {
 
     @Test
     fun `Register correct username, email and password, result success`() = runBlocking {
-        val result = register("success", "success@test.com", "success").first()
-        assertEquals("result is not loading", result is Resource.Loading, true)
-
-        val success = register("success", "success@test.com", "success").last()
-        assertEquals("result is not success", success is Resource.Success, true)
+        val result = register("success", "success@test.com", "Success1+")
+        result.test {
+            val loading = awaitItem()
+            assertEquals("result is not loading", loading is Resource.Loading, true)
+            val success = awaitItem()
+            assertEquals("result is not success", success is Resource.Success, true)
+            awaitComplete()
+        }
     }
 
     @Test
     fun `Login incorrect username, email and password, result error`() = runBlocking {
-        val result = register("notsuccess", "notsuccess@test.com", "notsuccess").first()
-        assertEquals("result is not loading", result is Resource.Loading, true)
-
-        val error = register("notsuccess", "notsuccess@test.com", "notsuccess").last()
-        assertEquals("result is not error", error is Resource.Error, true)
+        val result = register("notsuccess", "notsuccess@test.com", "notsuccess")
+        result.test {
+            val loading = awaitItem()
+            assertEquals("result is not loading", loading is Resource.Loading, true)
+            val success = awaitItem()
+            assertEquals("result is not error", success is Resource.Error, true)
+            awaitComplete()
+        }
     }
 }
