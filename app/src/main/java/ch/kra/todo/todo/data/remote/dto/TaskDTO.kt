@@ -8,6 +8,7 @@ import ch.kra.todo.todo.domain.model.Task
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeParseException
 
 data class TaskDTO(
     val id: Int? = null,
@@ -20,7 +21,7 @@ data class TaskDTO(
     fun toTask(): Task {
         var deadlineDate: LocalDateTime? = null
         deadline?.let {
-            deadlineDate = DateFormatUtil.fromISOInstantString(it)
+            deadlineDate = try { DateFormatUtil.fromISOInstantString(it) } catch (err: DateTimeParseException) { null }
         }
         return Task(
             id = id,

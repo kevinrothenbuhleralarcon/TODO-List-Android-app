@@ -59,6 +59,10 @@ class TodoListViewModel @Inject constructor(
                 )
             }
 
+            is TodoListEvent.Refresh -> {
+                getTodoList()
+            }
+
             is TodoListEvent.Disconnect -> {
                 /* TODO */
             }
@@ -72,7 +76,7 @@ class TodoListViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getTodoList() {
+    private fun getTodoList() {
         viewModelScope.launch {
             getTodoList(_token.value)
                 .onEach { result ->

@@ -8,6 +8,7 @@ import ch.kra.todo.todo.domain.model.Todo
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeParseException
 
 data class TodoDTO(
     val id: Int? = null,
@@ -21,8 +22,8 @@ data class TodoDTO(
         return Todo(
             id = id,
             title = title,
-            createdAt = DateFormatUtil.fromISOInstantString(createdAt),
-            lastUpdatedAt = DateFormatUtil.fromISOInstantString(lastUpdatedAt),
+            createdAt = try { DateFormatUtil.fromISOInstantString(createdAt) } catch (err: DateTimeParseException) { DateFormatUtil.fromLong(System.currentTimeMillis()) },
+            lastUpdatedAt = try { DateFormatUtil.fromISOInstantString(lastUpdatedAt) } catch (err: DateTimeParseException) { DateFormatUtil.fromLong(System.currentTimeMillis()) },
             tasks = tasks?.map { it.toTask() }
         )
     }
