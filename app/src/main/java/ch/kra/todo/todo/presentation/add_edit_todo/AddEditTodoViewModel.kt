@@ -1,6 +1,7 @@
 package ch.kra.todo.todo.presentation.add_edit_todo
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -18,10 +19,7 @@ import ch.kra.todo.todo.data.remote.dto.request.AddEditTodoRequestDTO
 import ch.kra.todo.todo.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,7 +50,7 @@ class AddEditTodoViewModel @Inject constructor(
     val currentTodoId get() = _currentTodoId
 
     private val _uiEvent = Channel<UIEvent>()
-    val uiEvent = _uiEvent.consumeAsFlow()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         loadSettings()
