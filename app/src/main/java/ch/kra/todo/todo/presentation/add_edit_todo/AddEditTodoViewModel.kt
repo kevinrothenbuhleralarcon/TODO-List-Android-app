@@ -36,9 +36,7 @@ class AddEditTodoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _token = mutableStateOf("")
-    private val _username = mutableStateOf("")
-    val username: State<String> = _username
+    val preferences = settingsDataStoreImpl.preferenceFlow
 
     private val _todoFormState = mutableStateOf(TodoFormState())
     val todoFormState: State<TodoFormState> = _todoFormState
@@ -53,7 +51,6 @@ class AddEditTodoViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        loadSettings()
         savedStateHandle.get<Int>("todoId")?.let { todoId ->
             if (todoId != -1) {
                 getTodo(todoId)
@@ -120,63 +117,64 @@ class AddEditTodoViewModel @Inject constructor(
 
     private fun getTodo(todoId: Int) {
         viewModelScope.launch {
-            getTodo(_token.value, todoId)
-                .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            _currentTodoId = result.data.id
-                            _todoFormState.value = _todoFormState.value.copy(
-                                title = result.data.title,
-                                createdAt = result.data.createdAt,
-                                tasks = result.data.tasks?.map { task ->
-                                    TaskFormState(
-                                        id = task.id,
-                                        description = task.description,
-                                        status = task.status,
-                                        deadline = task.deadline
-                                    )
-                                } ?: emptyList(),
-                                isLoading = false
-                            )
-                        }
-
-                        is Resource.Error -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = false
-                            )
-                            if (result.message == INVALID_TOKEN) {
-                                sendUIEvent(
-                                    UIEvent.Navigate(
-                                        Routes.LOGIN
-                                    )
-                                )
-                            } else {
-                                sendUIEvent(
-                                    UIEvent.ShowSnackbar(
-                                        message = if (result.message.isNotEmpty()) {
-                                            UIText.DynamicString(result.message)
-                                        } else {
-                                            UIText.StringResource(R.string.error)
-                                        }
-                                    )
+            preferences.collectLatest {
+                getTodo(it.token, todoId)
+                    .onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                _currentTodoId = result.data.id
+                                _todoFormState.value = _todoFormState.value.copy(
+                                    title = result.data.title,
+                                    createdAt = result.data.createdAt,
+                                    tasks = result.data.tasks?.map { task ->
+                                        TaskFormState(
+                                            id = task.id,
+                                            description = task.description,
+                                            status = task.status,
+                                            deadline = task.deadline
+                                        )
+                                    } ?: emptyList(),
+                                    isLoading = false
                                 )
                             }
 
-                        }
+                            is Resource.Error -> {
+                                _todoFormState.value = _todoFormState.value.copy(
+                                    isLoading = false
+                                )
+                                if (result.message == INVALID_TOKEN) {
+                                    sendUIEvent(
+                                        UIEvent.Navigate(
+                                            Routes.LOGIN
+                                        )
+                                    )
+                                } else {
+                                    sendUIEvent(
+                                        UIEvent.ShowSnackbar(
+                                            message = if (result.message.isNotEmpty()) {
+                                                UIText.DynamicString(result.message)
+                                            } else {
+                                                UIText.StringResource(R.string.error)
+                                            }
+                                        )
+                                    )
+                                }
 
-                        is Resource.Loading -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = true
-                            )
+                            }
+
+                            is Resource.Loading -> {
+                                _todoFormState.value = _todoFormState.value.copy(
+                                    isLoading = true
+                                )
+                            }
                         }
-                    }
-                }.launchIn(this)
+                    }.launchIn(this)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun submitData() {
-
         _todoFormState.value = todoFormState.value.copy(
             titleError = null,
             tasksEmptyError = null,
@@ -228,100 +226,8 @@ class AddEditTodoViewModel @Inject constructor(
             }
         )
         viewModelScope.launch {
-            addTodo(_token.value, AddEditTodoRequestDTO(todo))
-                .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            sendUIEvent(UIEvent.PopBackStack)
-                        }
-
-                        is Resource.Error -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = false
-                            )
-                            if (result.message == INVALID_TOKEN) {
-                                sendUIEvent(
-                                    UIEvent.Navigate(
-                                        Routes.LOGIN
-                                    )
-                                )
-                            } else {
-                                if (result.message.isNotEmpty()) {
-                                    _apiError.value = UIText.DynamicString(result.message)
-                                } else {
-                                    _apiError.value = UIText.StringResource(R.string.io_error)
-                                }
-                            }
-                        }
-
-                        is Resource.Loading -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = true
-                            )
-                        }
-                    }
-                }.launchIn(this)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun updateTodo() {
-        val todo = TodoDTO(
-            id = _currentTodoId,
-            title = _todoFormState.value.title,
-            createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
-            lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
-            tasks = _todoFormState.value.tasks.map { task ->
-                TaskDTO(
-                    id = task.id,
-                    description = task.description,
-                    deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
-                    status = task.status,
-                    todoId = _currentTodoId
-                )
-            }
-        )
-        viewModelScope.launch {
-            updateTodo(_token.value, AddEditTodoRequestDTO(todo))
-                .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            sendUIEvent(UIEvent.PopBackStack)
-                        }
-
-                        is Resource.Error -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = false
-                            )
-                            if (result.message == INVALID_TOKEN) {
-                                sendUIEvent(
-                                    UIEvent.Navigate(
-                                        Routes.LOGIN
-                                    )
-                                )
-                            } else {
-                                if (result.message.isNotEmpty()) {
-                                    _apiError.value = UIText.DynamicString(result.message)
-                                } else {
-                                    _apiError.value = UIText.StringResource(R.string.io_error)
-                                }
-                            }
-                        }
-
-                        is Resource.Loading -> {
-                            _todoFormState.value = _todoFormState.value.copy(
-                                isLoading = true
-                            )
-                        }
-                    }
-                }.launchIn(this)
-        }
-    }
-
-    private fun deleteTodo() {
-        _currentTodoId?.let {
-            viewModelScope.launch {
-                deleteTodo(_token.value, it)
+            preferences.collectLatest {
+                addTodo(it.token, AddEditTodoRequestDTO(todo))
                     .onEach { result ->
                         when (result) {
                             is Resource.Success -> {
@@ -354,16 +260,104 @@ class AddEditTodoViewModel @Inject constructor(
                             }
                         }
                     }.launchIn(this)
-
             }
         }
     }
 
-    private fun loadSettings() {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateTodo() {
+        val todo = TodoDTO(
+            id = _currentTodoId,
+            title = _todoFormState.value.title,
+            createdAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            lastUpdatedAt = DateFormatUtil.toISOInstantString(DateFormatUtil.fromLong(System.currentTimeMillis())),
+            tasks = _todoFormState.value.tasks.map { task ->
+                TaskDTO(
+                    id = task.id,
+                    description = task.description,
+                    deadline = task.deadline?.let { DateFormatUtil.toISOInstantString(it) },
+                    status = task.status,
+                    todoId = _currentTodoId
+                )
+            }
+        )
         viewModelScope.launch {
-            settingsDataStoreImpl.preferenceFlow.collect {
-                _token.value = it.token
-                _username.value = it.connectedUser
+            preferences.collectLatest {
+                updateTodo(it.token, AddEditTodoRequestDTO(todo))
+                    .onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                sendUIEvent(UIEvent.PopBackStack)
+                            }
+
+                            is Resource.Error -> {
+                                _todoFormState.value = _todoFormState.value.copy(
+                                    isLoading = false
+                                )
+                                if (result.message == INVALID_TOKEN) {
+                                    sendUIEvent(
+                                        UIEvent.Navigate(
+                                            Routes.LOGIN
+                                        )
+                                    )
+                                } else {
+                                    if (result.message.isNotEmpty()) {
+                                        _apiError.value = UIText.DynamicString(result.message)
+                                    } else {
+                                        _apiError.value = UIText.StringResource(R.string.io_error)
+                                    }
+                                }
+                            }
+
+                            is Resource.Loading -> {
+                                _todoFormState.value = _todoFormState.value.copy(
+                                    isLoading = true
+                                )
+                            }
+                        }
+                    }.launchIn(this)
+            }
+        }
+    }
+
+    private fun deleteTodo() {
+        _currentTodoId?.let { todoId ->
+            viewModelScope.launch {
+                preferences.collectLatest {
+                    deleteTodo(it.token, todoId)
+                        .onEach { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    sendUIEvent(UIEvent.PopBackStack)
+                                }
+
+                                is Resource.Error -> {
+                                    _todoFormState.value = _todoFormState.value.copy(
+                                        isLoading = false
+                                    )
+                                    if (result.message == INVALID_TOKEN) {
+                                        sendUIEvent(
+                                            UIEvent.Navigate(
+                                                Routes.LOGIN
+                                            )
+                                        )
+                                    } else {
+                                        if (result.message.isNotEmpty()) {
+                                            _apiError.value = UIText.DynamicString(result.message)
+                                        } else {
+                                            _apiError.value = UIText.StringResource(R.string.io_error)
+                                        }
+                                    }
+                                }
+
+                                is Resource.Loading -> {
+                                    _todoFormState.value = _todoFormState.value.copy(
+                                        isLoading = true
+                                    )
+                                }
+                            }
+                        }.launchIn(this)
+                }
             }
         }
     }

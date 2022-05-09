@@ -14,10 +14,7 @@ import ch.kra.todo.core.data.local.SettingsDataStoreImpl
 import ch.kra.todo.todo.domain.use_case.GetTodoList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,19 +25,13 @@ class TodoListViewModel @Inject constructor(
     private val settingsDataStoreImpl: SettingsDataStore
 ): ViewModel() {
 
-    private val _token = mutableStateOf("")
-    private val _username = mutableStateOf("")
-    val username: State<String> = _username
+    val preferences = settingsDataStoreImpl.preferenceFlow
 
     private val _todoListState = mutableStateOf(TodoListState())
     val todoListState: State<TodoListState> = _todoListState
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
-
-    init {
-        loadSettings()
-    }
 
     fun onEvent(event: TodoListEvent) {
         when (event) {
@@ -78,49 +69,42 @@ class TodoListViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getTodoList() {
         viewModelScope.launch {
-            getTodoList(_token.value)
-                .onEach { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        _todoListState.value = todoListState.value.copy(
-                            todoList = result.data,
-                            isLoading = false
-                        )
-                    }
+            preferences.collectLatest {
+                getTodoList(it.token)
+                    .onEach { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                _todoListState.value = todoListState.value.copy(
+                                    todoList = result.data,
+                                    isLoading = false
+                                )
+                            }
 
-                    is Resource.Error -> {
-                        _todoListState.value = todoListState.value.copy(
-                            todoList = result.data ?: emptyList(),
-                            isLoading = false
-                        )
-                        if (result.message == Constants.INVALID_TOKEN) {
-                            sendUIEvent(UIEvent.Navigate(
-                                Routes.LOGIN
-                            ))
-                        } else {
-                            sendUIEvent(UIEvent.ShowSnackbar(
-                                if (result.message.isNotEmpty()) UIText.DynamicString(result.message)
-                                else UIText.StringResource(R.string.io_error)
-                            ))
+                            is Resource.Error -> {
+                                _todoListState.value = todoListState.value.copy(
+                                    todoList = result.data ?: emptyList(),
+                                    isLoading = false
+                                )
+                                if (result.message == Constants.INVALID_TOKEN) {
+                                    sendUIEvent(UIEvent.Navigate(
+                                        Routes.LOGIN
+                                    ))
+                                } else {
+                                    sendUIEvent(UIEvent.ShowSnackbar(
+                                        if (result.message.isNotEmpty()) UIText.DynamicString(result.message)
+                                        else UIText.StringResource(R.string.io_error)
+                                    ))
+                                }
+                            }
+
+                            is Resource.Loading -> {
+                                _todoListState.value = todoListState.value.copy(
+                                    todoList = result.data ?: emptyList(),
+                                    isLoading = true
+                                )
+                            }
                         }
-                    }
-
-                    is Resource.Loading -> {
-                        _todoListState.value = todoListState.value.copy(
-                            todoList = result.data ?: emptyList(),
-                            isLoading = true
-                        )
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
-
-    private fun loadSettings() {
-        viewModelScope.launch {
-            settingsDataStoreImpl.preferenceFlow.collect {
-                _token.value = it.token
-                _username.value = it.connectedUser
+                    }.launchIn(this)
             }
         }
     }

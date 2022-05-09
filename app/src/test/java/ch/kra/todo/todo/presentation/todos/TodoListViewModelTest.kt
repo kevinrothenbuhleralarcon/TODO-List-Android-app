@@ -29,7 +29,7 @@ class TodoListViewModelTest {
     @Before
     fun setUp() {
         fakeTodoRepository = FakeTodoRepository()
-        fakeSettingsDataStoreImpl = FakeSettingsDataStoreImpl("success", "success")
+        fakeSettingsDataStoreImpl = FakeSettingsDataStoreImpl()
         todoListViewModel = TodoListViewModel(
             GetTodoList(fakeTodoRepository),
             fakeSettingsDataStoreImpl

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.core.DateFormatUtil
 import ch.kra.todo.core.UIEvent
+import ch.kra.todo.core.data.local.ConnectionPreferences
 import ch.kra.todo.core.presentation.ui.shared_composable.Footer
 import ch.kra.todo.core.presentation.ui.shared_composable.Header
 import ch.kra.todo.core.presentation.ui.shared_composable.LoadingWrapper
@@ -40,7 +42,7 @@ fun TodoListScreen(
     navigate: (UIEvent.Navigate) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
-    val username = viewModel.username.value
+    val username = viewModel.preferences.collectAsState(initial = ConnectionPreferences()).value.connectedUser
     val todoListState = viewModel.todoListState.value
 
     val context = LocalContext.current
