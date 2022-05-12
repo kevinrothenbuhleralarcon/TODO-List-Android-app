@@ -28,7 +28,7 @@ object DateFormatUtil {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun fromDateTimeValues(year: Int, month: Int, day: Int, hour: Int, minutes: Int, seconds: Int): LocalDateTime {
+    fun fromDateTimeValues(year: Int, month: Int, day: Int, hour: Int = 0, minutes: Int = 0, seconds: Int = 0): LocalDateTime {
         val dtf = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s")
         val stringDateTime = "$year-$month-$day $hour:$minutes:$seconds"
         return LocalDateTime.parse(stringDateTime, dtf)

@@ -41,7 +41,8 @@ class FakeTodoRepository: TodoRepository {
         return flow {
             emit(Resource.Loading())
             if (token == "success") {
-                println("Added: ${todos.add(request.todo.toTodo())}")
+                val todo = request.todo.toTodo().copy(id = todos.size + 1)
+                todos.add(todo)
                 emit(Resource.Success(data = "Todo added"))
             } else {
                 emit(Resource.Error(message = INVALID_TOKEN))

@@ -52,7 +52,7 @@ class AddEditTodoViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<Int>("todoId")?.let { todoId ->
-            if (todoId != -1) {
+            if (todoId > -1) {
                 getTodo(todoId)
             }
         }
@@ -332,6 +332,7 @@ class AddEditTodoViewModel @Inject constructor(
                                 }
 
                                 is Resource.Error -> {
+                                    println("resource is error")
                                     _todoFormState.value = _todoFormState.value.copy(
                                         isLoading = false
                                     )
@@ -343,8 +344,10 @@ class AddEditTodoViewModel @Inject constructor(
                                         )
                                     } else {
                                         if (result.message.isNotEmpty()) {
+                                            println("Message is not empty(${result.message})")
                                             _apiError.value = UIText.DynamicString(result.message)
                                         } else {
+                                            println("Message is empty")
                                             _apiError.value = UIText.StringResource(R.string.io_error)
                                         }
                                     }
