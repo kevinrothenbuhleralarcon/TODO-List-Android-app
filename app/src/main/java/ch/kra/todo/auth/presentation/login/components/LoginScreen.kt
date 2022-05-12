@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -32,6 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.auth.presentation.login.LoginListEvent
 import ch.kra.todo.auth.presentation.login.LoginViewModel
+import ch.kra.todo.core.TestTags.API_ERROR
+import ch.kra.todo.core.TestTags.PASSWORD_ERROR
+import ch.kra.todo.core.TestTags.USERNAME_ERROR
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.presentation.ui.shared_composable.Footer
 import ch.kra.todo.core.presentation.ui.shared_composable.Header
@@ -132,10 +136,11 @@ private fun LoginForm(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
+                    .padding(vertical = 10.dp)
+                    .testTag(API_ERROR),
                 text = error.asString(),
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = Bold,
                 color = TextErrorColor
             )
         }
@@ -154,7 +159,9 @@ private fun LoginForm(
         if (loginFormState.usernameError != null) {
             Text(
                 text = loginFormState.usernameError.asString(),
-                color = MaterialTheme.colors.error
+                color = MaterialTheme.colors.error,
+                modifier = Modifier
+                    .testTag(USERNAME_ERROR)
             )
         }
 
@@ -188,7 +195,9 @@ private fun LoginForm(
         if (loginFormState.passwordError != null) {
             Text(
                 text = loginFormState.passwordError.asString(),
-                color = MaterialTheme.colors.error
+                color = MaterialTheme.colors.error,
+                modifier = Modifier
+                    .testTag(PASSWORD_ERROR)
             )
         }
 
