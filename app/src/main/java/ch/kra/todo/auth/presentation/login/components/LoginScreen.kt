@@ -1,19 +1,13 @@
 package ch.kra.todo.auth.presentation.login.components
 
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -38,12 +32,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.auth.presentation.login.LoginListEvent
 import ch.kra.todo.auth.presentation.login.LoginViewModel
-import ch.kra.todo.core.Constants.BASE_URL
 import ch.kra.todo.core.UIEvent
-import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
 import ch.kra.todo.core.presentation.ui.shared_composable.Footer
 import ch.kra.todo.core.presentation.ui.shared_composable.Header
 import ch.kra.todo.core.presentation.ui.shared_composable.LoadingWrapper
+import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
 import ch.kra.todo.core.presentation.ui.theme.TextErrorColor
 import kotlinx.coroutines.flow.collect
 
