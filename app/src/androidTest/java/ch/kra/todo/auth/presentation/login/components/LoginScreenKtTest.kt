@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import ch.kra.todo.R
 import ch.kra.todo.core.TestTags.API_ERROR
+import ch.kra.todo.core.TestTags.CONNECTED_USER
 import ch.kra.todo.core.TestTags.PASSWORD_ERROR
 import ch.kra.todo.core.TestTags.USERNAME_ERROR
 import ch.kra.todo.core.presentation.MainActivity
@@ -47,6 +48,9 @@ class LoginScreenKtTest {
 
     @Test
     fun onStart_FormIsDisplayed() {
+        composeRule.onNodeWithContentDescription(context.getString(R.string.back)).assertDoesNotExist()
+        composeRule.onNodeWithTag(CONNECTED_USER).assertDoesNotExist()
+
         composeRule.onNodeWithText(context.getString(R.string.login_header)).assertExists()
         composeRule.onNodeWithTag(API_ERROR).assertDoesNotExist()
         composeRule.onNodeWithText(context.getString(R.string.username)).assertExists()
@@ -55,6 +59,8 @@ class LoginScreenKtTest {
         composeRule.onNodeWithTag(PASSWORD_ERROR).assertDoesNotExist()
         composeRule.onNodeWithText(context.getString(R.string.submit)).assertExists()
         composeRule.onNodeWithText(context.getString(R.string.create_account)).assertExists()
+
+        composeRule.onNodeWithText(context.getString(R.string.author)).assertExists()
     }
 
     @Test

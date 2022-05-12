@@ -11,12 +11,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.todo.R
+import ch.kra.todo.core.TestTags.CONNECTED_USER
 
 @Composable
 fun Header(
@@ -69,6 +71,7 @@ fun Header(
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 20.dp)
+                    .testTag(CONNECTED_USER)
             )
         }
     }
