@@ -102,9 +102,11 @@ class AddEditTodoViewModel @Inject constructor(
             }
 
             is AddEditTodoEvent.RemoveTask -> {
-                val tasks = _todoFormState.value.tasks.toMutableList()
-                tasks.removeAt(event.id)
-                _todoFormState.value = _todoFormState.value.copy(tasks = tasks)
+                if (todoFormState.value.tasks.size > 1) {
+                    val tasks = _todoFormState.value.tasks.toMutableList()
+                    tasks.removeAt(event.id)
+                    _todoFormState.value = _todoFormState.value.copy(tasks = tasks)
+                }
             }
         }
     }

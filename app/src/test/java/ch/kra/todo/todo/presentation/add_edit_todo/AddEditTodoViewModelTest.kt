@@ -1,6 +1,7 @@
 package ch.kra.todo.todo.presentation.add_edit_todo
 
 import android.content.Context
+import androidx.compose.animation.defaultDecayAnimationSpec
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import ch.kra.todo.MainCoroutineRule
@@ -60,6 +61,25 @@ class AddEditTodoViewModelTest {
         )
     }
 
+    private fun validateNavigateToLogin() = runBlocking {
+        addEditTodoViewModel.uiEvent.test {
+            val event = awaitItem()
+            if (event is UIEvent.Navigate)
+                assertEquals("The route is not correct", Routes.LOGIN, event.route)
+            else
+                fail("event is not navigate")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun validatePopBackStack() = runBlocking {
+        addEditTodoViewModel.uiEvent.test {
+            val event = awaitItem()
+            assertTrue("event id not PopBackStack", event is UIEvent.PopBackStack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     @Test
     fun `Get Todo init with correct id and token, return todo`() = runBlocking {
         val todoId = 2
@@ -70,7 +90,7 @@ class AddEditTodoViewModelTest {
         fakeSettingsDataStoreImpl.saveTokenToPreferenceStore("success")
 
         initViewModel(savedStateHandle)
-
+        assertEquals("currentTodoId is not correct", todoId, addEditTodoViewModel.currentTodoId)
         assertEquals("Todo title is not correct", todos[todoId-1].title, addEditTodoViewModel.todoFormState.value.title)
     }
 
@@ -80,18 +100,10 @@ class AddEditTodoViewModelTest {
         val savedStateHandle = SavedStateHandle().apply {
             set("todoId", todoId)
         }
-
         fakeSettingsDataStoreImpl.saveTokenToPreferenceStore("notSuccess")
 
         initViewModel(savedStateHandle)
-
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not  navigate", event is UIEvent.Navigate)
-            if (event is UIEvent.Navigate)
-                assertEquals("The route is not correct", Routes.LOGIN, event.route)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validateNavigateToLogin()
     }
 
     @Test
@@ -167,11 +179,7 @@ class AddEditTodoViewModelTest {
         addEditTodoViewModel.onEvent(AddEditTodoEvent.StatusChanged(1, status1))
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Save)
 
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not PopBackStack", event is UIEvent.PopBackStack)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validatePopBackStack()
 
         fakeTodoRepository.getTodo(token, todoId).test {
             val loading = awaitItem()
@@ -224,13 +232,7 @@ class AddEditTodoViewModelTest {
         addEditTodoViewModel.onEvent(AddEditTodoEvent.StatusChanged(1, status1))
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Save)
 
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not Navigate", event is UIEvent.Navigate)
-            if (event is UIEvent.Navigate)
-                assertEquals("Route is not Login", Routes.LOGIN, event.route)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validateNavigateToLogin()
     }
 
     @Test
@@ -256,11 +258,7 @@ class AddEditTodoViewModelTest {
         addEditTodoViewModel.onEvent(AddEditTodoEvent.StatusChanged(1, status1))
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Save)
 
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not PopBackStack", event is UIEvent.PopBackStack)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validatePopBackStack()
 
         fakeTodoRepository.getTodo(token, todoId).test {
             val loading = awaitItem()
@@ -310,13 +308,7 @@ class AddEditTodoViewModelTest {
         addEditTodoViewModel.onEvent(AddEditTodoEvent.StatusChanged(1, status1))
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Save)
 
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not Navigate", event is UIEvent.Navigate)
-            if (event is UIEvent.Navigate)
-                assertEquals("Route is not Login", Routes.LOGIN, event.route)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validateNavigateToLogin()
     }
 
     @Test
@@ -346,13 +338,7 @@ class AddEditTodoViewModelTest {
         }
         initViewModel(savedStateHandle)
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Delete)
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not Navigate", event is UIEvent.Navigate)
-            if (event is UIEvent.Navigate)
-                assertEquals("Route is not Login", Routes.LOGIN, event.route)
-            cancelAndIgnoreRemainingEvents()
-        }
+        validateNavigateToLogin()
     }
 
     @Test
@@ -396,10 +382,7 @@ class AddEditTodoViewModelTest {
 
         addEditTodoViewModel.onEvent(AddEditTodoEvent.Delete)
 
-        addEditTodoViewModel.uiEvent.test {
-            val event = awaitItem()
-            assertTrue("event is not PopBackStack", event is UIEvent.PopBackStack)
-        }
+        validatePopBackStack()
 
         fakeTodoRepository.getTodoList(token).test {
             val loading = awaitItem()
@@ -415,5 +398,117 @@ class AddEditTodoViewModelTest {
         }
     }
 
-    
+    @Test
+    fun `Navigate back, UIEvent PopBackStack is send`() = runBlocking {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.NavigateBack)
+
+
+    }
+
+    @Test
+    fun `TitleChanged, todo title is changed`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        assertEquals("Title is not empty", "", addEditTodoViewModel.todoFormState.value.title)
+
+        val title = "Todo title"
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.TitleChanged(title))
+
+        assertEquals("Title is not correct", title, addEditTodoViewModel.todoFormState.value.title)
+    }
+
+    @Test
+    fun `DescriptionChanged, task description is changed`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        assertEquals("description is not empty", "", addEditTodoViewModel.todoFormState.value.tasks[0].description)
+
+        val description = "Task description"
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.DescriptionChanged(0, description))
+
+        assertEquals("Description is not correct", description, addEditTodoViewModel.todoFormState.value.tasks[0].description)
+    }
+
+    @Test
+    fun `StatusChanged, task status is changed`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        assertFalse("status is not false", addEditTodoViewModel.todoFormState.value.tasks[0].status)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.StatusChanged(0, true))
+
+        assertTrue("status is not true", addEditTodoViewModel.todoFormState.value.tasks[0].status)
+    }
+
+    @Test
+    fun `DeadlineChanged, task deadline is changed`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        assertNull("deadline is not null", addEditTodoViewModel.todoFormState.value.tasks[0].deadline)
+
+        val deadline = DateFormatUtil.fromDateTimeValues(2022, 5, 12)
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.DeadlineChanged(0, deadline))
+
+        assertEquals("deadline is not correct", deadline, addEditTodoViewModel.todoFormState.value.tasks[0].deadline)
+    }
+
+    @Test
+    fun `AddTask, another empty task is added`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        val numberOfTasks = 1
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.AddTask)
+
+        assertEquals("number of tasks is not correct", numberOfTasks + 1, addEditTodoViewModel.todoFormState.value.tasks.size)
+    }
+
+    @Test
+    fun `RemoveTask, the correct task is removed`() {
+        val savedStateHandle = SavedStateHandle()
+        initViewModel(savedStateHandle)
+
+        val description1 = "Task 1"
+        val description2 = "Task 2"
+        val description3 = "Task 3"
+
+        var numberOfTasks = 1
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.AddTask)
+        numberOfTasks++
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.AddTask)
+        numberOfTasks++
+
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.DescriptionChanged(0, description1))
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.DescriptionChanged(1, description2))
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.DescriptionChanged(2, description3))
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.RemoveTask(1))
+        numberOfTasks--
+
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+        assertEquals("task at id 1 has not the correct description", description3, addEditTodoViewModel.todoFormState.value.tasks[1].description)
+
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.RemoveTask(0))
+        numberOfTasks--
+
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+        assertEquals("task at id 1 has not the correct description", description3, addEditTodoViewModel.todoFormState.value.tasks[0].description)
+
+        /* this is the last task, it should not be removed */
+        addEditTodoViewModel.onEvent(AddEditTodoEvent.RemoveTask(0))
+        assertEquals("number of tasks is not correct", numberOfTasks, addEditTodoViewModel.todoFormState.value.tasks.size)
+    }
 }
