@@ -1,7 +1,6 @@
 package ch.kra.todo.todo.presentation.add_edit_todo.components
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -24,13 +23,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.core.DateFormatUtil
+import ch.kra.todo.core.TestTags.TASK_CONTENT
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.data.local.ConnectionPreferences
-import ch.kra.todo.core.presentation.ui.shared_composable.Footer
-import ch.kra.todo.core.presentation.ui.shared_composable.Header
-import ch.kra.todo.core.presentation.ui.shared_composable.LoadingWrapper
-import ch.kra.todo.core.presentation.ui.shared_composable.TodoCard
-import ch.kra.todo.core.presentation.ui.shared_composable.DatePicker
+import ch.kra.todo.core.presentation.ui.shared_composable.*
 import ch.kra.todo.core.presentation.ui.theme.BorderColor
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoEvent
 import ch.kra.todo.todo.presentation.add_edit_todo.AddEditTodoViewModel
@@ -184,6 +180,7 @@ private fun TodoDetail(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
+
                     ) {
                         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
                             Checkbox(
@@ -203,6 +200,7 @@ private fun TodoDetail(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(horizontal = 10.dp)
+                                .testTag(TASK_CONTENT)
                         ) {
                             OutlinedTextField(
                                 value = todoState.tasks[taskId].description,

@@ -3,6 +3,7 @@ package ch.kra.todo.todo.presentation.add_edit_todo.components
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,7 +70,14 @@ class AddEditScreenKtTest {
     @Test
     fun onStart_AddTodoIsDisplayed() {
         with(composeRule) {
+            onNodeWithContentDescription(context.getString(R.string.back)).assertIsDisplayed()
+            onNodeWithText(connectedUser).assertIsDisplayed()
+
             onNodeWithText(context.getString(R.string.new_todo)).assertIsDisplayed()
+            onNodeWithText(context.getString(R.string.title)).assertIsDisplayed()
+            onNodeWithText(context.getString(R.string.description)).assertIsDisplayed()
+            onNodeWithContentDescription(context.getString(R.string.add_task)).assertIsDisplayed()
+            onNodeWithText(context.getString(R.string.save)).assertIsDisplayed()
         }
     }
 }

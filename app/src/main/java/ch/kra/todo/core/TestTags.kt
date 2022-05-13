@@ -11,4 +11,6 @@ object TestTags {
 
     const val CONNECTED_USER = "CONNECTED_USER"
     const val HEADER_TITLE = "HEADER_TITLE"
+
+    const val TASK_CONTENT = "TASK_CONTENT"
 }
