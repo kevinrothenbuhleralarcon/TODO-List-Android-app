@@ -10,4 +10,5 @@ object TestTags {
     const val TODO_LIST = "TODO_LIST"
 
     const val CONNECTED_USER = "CONNECTED_USER"
+    const val HEADER_TITLE = "HEADER_TITLE"
 }

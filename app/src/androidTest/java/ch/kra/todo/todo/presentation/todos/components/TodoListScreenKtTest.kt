@@ -29,7 +29,9 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 import ch.kra.todo.R
+import ch.kra.todo.core.TestTags.HEADER_TITLE
 import ch.kra.todo.core.TestTags.TODO_LIST
+import ch.kra.todo.todo.data.remote.dto.TaskDTO
 import ch.kra.todo.todo.presentation.add_edit_todo.components.AddEditScreen
 
 @HiltAndroidTest
@@ -50,11 +52,11 @@ class TodoListScreenKtTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val todos =  mutableListOf(
-        TodoDTO(id = 1, title = "Test Todo 1", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  emptyList()),
-        TodoDTO(id = 2, title = "Test Todo 2", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  emptyList()),
-        TodoDTO(id = 3, title = "Test Todo 3", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  emptyList()),
-        TodoDTO(id = 4, title = "Test Todo 4", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  emptyList()),
-        TodoDTO(id = 5, title = "Test Todo 5", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  emptyList())
+        TodoDTO(id = 1, title = "Test Todo 1", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  listOf(TaskDTO(description = "First task", status = false))),
+        TodoDTO(id = 2, title = "Test Todo 2", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  listOf(TaskDTO(description = "First task", status = false))),
+        TodoDTO(id = 3, title = "Test Todo 3", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  listOf(TaskDTO(description = "First task", status = false))),
+        TodoDTO(id = 4, title = "Test Todo 4", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  listOf(TaskDTO(description = "First task", status = false))),
+        TodoDTO(id = 5, title = "Test Todo 5", createdAt = "2022-05-02T06:53:22.231Z", lastUpdatedAt = "2022-05-02T06:53:22.231Z", tasks =  listOf(TaskDTO(description = "First task", status = false)))
     )
 
     private val connectedUser = "Kevin"
@@ -144,6 +146,17 @@ class TodoListScreenKtTest {
 
             // Assert that we're back on the todoListScreen
             onNodeWithText(context.getString(R.string.todo_list_header, connectedUser)).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun onTodoClick_NavigateToAddEditTodo() {
+        with(composeRule) {
+            onNodeWithText(todos.first().title).performClick()
+
+            // Assert that we're on the AddEditTodoScreen with the correct todo loaded
+            onNodeWithTag(HEADER_TITLE).assertTextEquals(todos.first().title)
+            onNodeWithText(todos.first().tasks!![0].description).assertIsDisplayed()
         }
     }
 }

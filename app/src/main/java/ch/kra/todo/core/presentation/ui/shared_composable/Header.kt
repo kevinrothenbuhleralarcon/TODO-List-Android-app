@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.todo.R
 import ch.kra.todo.core.TestTags.CONNECTED_USER
+import ch.kra.todo.core.TestTags.HEADER_TITLE
 
 @Composable
 fun Header(
@@ -58,6 +59,8 @@ fun Header(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.onPrimary,
+                    modifier = Modifier
+                        .testTag(HEADER_TITLE)
                 )
             }
         }
