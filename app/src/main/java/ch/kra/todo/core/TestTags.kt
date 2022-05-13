@@ -7,5 +7,7 @@ object TestTags {
     const val REPEATED_PASSWORD_ERROR = "REPEATED_PASSWORD_ERROR"
     const val EMAIL_ERROR = "EMAIL_ERROR"
 
+    const val TODO_LIST = "TODO_LIST"
+
     const val CONNECTED_USER = "CONNECTED_USER"
 }

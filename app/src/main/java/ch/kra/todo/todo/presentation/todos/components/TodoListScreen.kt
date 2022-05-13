@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.todo.R
 import ch.kra.todo.core.DateFormatUtil
+import ch.kra.todo.core.TestTags.TODO_LIST
 import ch.kra.todo.core.UIEvent
 import ch.kra.todo.core.data.local.ConnectionPreferences
 import ch.kra.todo.core.presentation.ui.shared_composable.Footer
@@ -127,6 +129,7 @@ private fun TodoList(
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier
             .fillMaxSize()
+            .testTag(TODO_LIST)
     ) {
         items(todoList.size) {
             TodoCard(
