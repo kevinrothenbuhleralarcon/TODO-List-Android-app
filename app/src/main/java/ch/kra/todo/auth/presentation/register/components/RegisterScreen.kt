@@ -27,6 +27,7 @@ import ch.kra.todo.R
 import ch.kra.todo.auth.presentation.register.RegisterListEvent
 import ch.kra.todo.auth.presentation.register.RegisterViewModel
 import ch.kra.todo.core.TestTags.API_ERROR
+import ch.kra.todo.core.TestTags.EMAIL_ERROR
 import ch.kra.todo.core.TestTags.PASSWORD_ERROR
 import ch.kra.todo.core.TestTags.REPEATED_PASSWORD_ERROR
 import ch.kra.todo.core.TestTags.USERNAME_ERROR
@@ -181,7 +182,9 @@ private fun RegisterForm(
           if (registerFormState.emailError != null) {
                Text(
                     text = registerFormState.emailError.asString(),
-                    color = MaterialTheme.colors.error
+                    color = MaterialTheme.colors.error,
+                    modifier = Modifier
+                         .testTag(EMAIL_ERROR)
                )
           }
 
