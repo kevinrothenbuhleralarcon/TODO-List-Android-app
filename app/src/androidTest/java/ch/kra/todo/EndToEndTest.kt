@@ -79,23 +79,18 @@ class EndToEndTest {
             // On AddEditTodo page, update the todo
             onNodeWithText(context.getString(R.string.title))
                 .assertIsDisplayed()
-                //.assertTextEquals(todoTitle)
+                .performTextClearance()
+
+            onNodeWithText(context.getString(R.string.title))
                 .performTextInput(todoTitleUpdated)
 
             onNodeWithText(task1Description)
                 .assertIsDisplayed()
                 .performTextInput(task1DescriptionUpdate)
 
-
-            onRoot()
-                .printToLog("task")
-
-
-            onNodeWithText(task2Description)
-                .assertIsDisplayed()
-                .onParent()
-                .onSiblings()
-                .filterToOne(hasContentDescription(context.getString(R.string.remove_task))).performClick()
+            onAllNodesWithContentDescription(context.getString(R.string.remove_task))
+                .onLast()
+                .performClick()
 
             onNodeWithText(task2Description).assertDoesNotExist()
 
@@ -111,7 +106,7 @@ class EndToEndTest {
             onNodeWithText(context.getString(R.string.yes)).performClick()
 
             // On TodoList page assert that there's no todo
-            onNodeWithTag(TODO_LIST).assertDoesNotExist()
+            onNodeWithText(todoTitleUpdated).assertDoesNotExist()
         }
     }
 }
